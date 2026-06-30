@@ -13,6 +13,7 @@ library(tidyverse)
 library(tidybayes)
 library(broom)
 library(broom.mixed) 
+library(confintr)
 library(performance)
 library(bayesplot) 
 library(here)
@@ -305,11 +306,7 @@ write.csv(ave_negative_slope_m2, here("Outputs", "AverageNegativeSlopebySpecies_
 
 ############# Examine correlation between threshold and intensity #################
 
-cor.test(ave_negative_slope_m2$min_adult, ave_negative_slope_m2$estimate, method="spearman", exact=F)
-
-# model with permutations
-PermCor::perm_test(ave_negative_slope_m2$min_adult, ave_negative_slope_m2$estimate, 
-                   B= 1000, method="Spearman")
+confintr::ci_cor(ave_negative_slope_m2$min_adult, ave_negative_slope_m2$estimate, method="spearman", type="bootstrap")
 
 ############# Measure phylogenetic signal in threshold and intensity #################
 
