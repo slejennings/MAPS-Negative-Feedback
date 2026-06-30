@@ -1,0 +1,7 @@
+model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
+MinAdultSS,NA,NA,fixed,NA,Intercept,1.334,0.286,0.686,1.804,1,4445.659,4792.408
+MinAdultSS,NA,NA,fixed,NA,scDC,0.214,0.114,-0.024,0.427,1,4120.221,5095.065
+MinAdultSS,NA,NA,fixed,NA,scDM,0.04,0.135,-0.236,0.297,1,4585.832,5030.389
+MinAdultSS,NA,NA,fixed,NA,sc_ssM,0.026,0.104,-0.185,0.224,1,4909.506,5481.939
+MinAdultSS,NA,NA,fixed,NA,sc_ssF,0.06,0.116,-0.165,0.286,1.001,5320.289,5250.932
+MinAdultSS,NA,NA,random,BirdTree,sd(Intercept),0.394,0.215,0.031,0.854,1.001,2193.35,3397.917

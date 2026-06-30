@@ -1,0 +1,7 @@
+model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
+SlopeMorph,NA,NA,fixed,NA,Intercept,-3.972,0.643,-5.252,-2.684,1.001,3969.327,4345.395
+SlopeMorph,NA,NA,fixed,NA,scHWI,0.085,0.188,-0.287,0.449,1,2921.576,4443.121
+SlopeMorph,NA,NA,fixed,NA,scLNMass,0.252,0.392,-0.484,1.053,1,2779.786,4125.959
+SlopeMorph,NA,NA,fixed,NA,scBeak_PC1,-0.284,0.38,-1.032,0.431,1,3029.922,4292.921
+SlopeMorph,NA,NA,fixed,NA,scBeak_PC2,0.299,0.211,-0.119,0.726,1,5077.697,5043.875
+SlopeMorph,NA,NA,random,BirdTree,sd(Intercept),1.181,0.386,0.393,1.954,1.003,1345.106,1705.394

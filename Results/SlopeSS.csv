@@ -1,0 +1,7 @@
+model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
+SlopeSS,NA,NA,fixed,NA,Intercept,-4.263,0.408,-5.075,-3.4,1.001,5509.738,5291.614
+SlopeSS,NA,NA,fixed,NA,scDC,-0.263,0.18,-0.599,0.108,1,3947.339,4975.971
+SlopeSS,NA,NA,fixed,NA,scDM,0.188,0.168,-0.149,0.509,1.001,5080.285,5357.713
+SlopeSS,NA,NA,fixed,NA,sc_ssM,-0.299,0.154,-0.594,-0.001,1,4995.379,5026.971
+SlopeSS,NA,NA,fixed,NA,sc_ssF,0.156,0.157,-0.148,0.466,1,4963.391,4834.687
+SlopeSS,NA,NA,random,BirdTree,sd(Intercept),0.669,0.33,0.058,1.344,1.001,1951.239,3043.603
