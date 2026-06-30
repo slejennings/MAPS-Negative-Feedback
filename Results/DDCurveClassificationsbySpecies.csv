@@ -1,0 +1,69 @@
+Classification for species' conditional effects curves,
+Type I: negative slope across all values of adult abundance,
+Type II: flat slope before becoming negative,
+Type III: postive slope followed by flat then negative or just negative,
+classifications determined by looking at SlopeSummarybySpecies_m2.csv,
+,
+Species,Curve Type
+ACFL,I
+AMRE,II
+AMRO,II
+AUWA,II
+BAWW,II
+BCCH,I
+BEWR,III
+BHGR,II
+BRCR,II
+BUOR,II
+BUSH,III
+BWWA,II
+CACH,II
+CARW,I
+CBCH,II
+CHSP,II
+COYE,II
+DOWO,I
+DUFL,II
+EATO,II
+FISP,III
+GCKI,II
+GRCA,III
+HAFL,I
+HETH,II
+HEWA,I
+HOFI,III
+HOWA,III
+HOWR,II
+INBU,II
+KEWA,II
+LAZB,II
+LEGO,II
+LISP,III
+LOWA,II
+MGWA,II
+MOCH,II
+NAWA,II
+NOCA,II
+OCWA,II
+ORJU,II
+OVEN,II
+PABU,II
+PUFI,II
+RBNU,II
+RBSA,II
+REVI,II
+SOSP,III
+SPTO,II
+SWTH,II
+TUTI,II
+VEER,II
+WAVI,II
+WEFL,I
+WETA,II
+WEVI,II
+WEWP,I
+WIWA,II
+WOTH,II
+WREN,II
+YBCH,II
+YEWA,III
