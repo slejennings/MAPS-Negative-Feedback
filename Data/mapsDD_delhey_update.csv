@@ -1,0 +1,63 @@
+SPEC,COMMONNAME,Species1_BirdLife,Species2_eBird,Species3_BirdTree,sex.sel.m,sex.sel.f
+ACFL,Acadian Flycatcher,Empidonax virescens,Empidonax virescens,Empidonax virescens,1,0
+AMRE,American Redstart,Setophaga ruticilla,Setophaga ruticilla,Setophaga ruticilla,2,0
+AMRO,American Robin,Turdus migratorius,Turdus migratorius,Turdus migratorius,0,0
+AUWA,Audubon's Warbler,Setophaga coronata,Setophaga coronata,Dendroica coronata,0,0
+BAWW,Black-and-white Warbler,Mniotilta varia,Mniotilta varia,Mniotilta varia,0,0
+BCCH,Black-capped Chickadee,Poecile atricapillus,Poecile atricapillus,Parus atricapillus,1,1
+BEWR,Bewick's Wren,Thryomanes bewickii,Thryomanes bewickii,Thryomanes bewickii,2,0
+BHGR,Black-headed Grosbeak,Pheucticus melanocephalus,Pheucticus melanocephalus,Pheucticus melanocephalus,0,0
+BRCR,Brown Creeper,Certhia americana,Certhia americana,Certhia americana,0,0
+BUSH,Bushtit,Psaltriparus minimus,Psaltriparus minimus,Psaltriparus minimus,3,3
+CACH,Carolina Chickadee,Poecile carolinensis,Poecile carolinensis,Parus carolinensis,0,0
+CARW,Carolina Wren,Thryothorus ludovicianus,Thryothorus ludovicianus,Thryothorus ludovicianus,1,0
+CBCH,Chestnut-backed Chickadee,Poecile rufescens,Poecile rufescens,Parus rufescens,0,0
+CHSP,Chipping Sparrow,Spizella passerina,Spizella passerina,Spizella passerina,1,0
+COYE,Common Yellowthroat,Geothlypis trichas,Geothlypis trichas,Geothlypis trichas,1,0
+DOWO,Downy Woodpecker,Dryobates pubescens,Dryobates pubescens,Picoides pubescens,0,0
+DUFL,Dusky Flycatcher,Empidonax oberholseri,Empidonax oberholseri,Empidonax oberholseri,0,2
+EATO,Eastern Towhee,Pipilo erythrophthalmus,Pipilo erythrophthalmus,Pipilo erythrophthalmus,1,0
+FISP,Field Sparrow,Spizella pusilla,Spizella pusilla,Spizella pusilla,1,0
+GCKI,Golden-crowned Kinglet,Regulus satrapa,Regulus satrapa,Regulus satrapa,0,0
+GRCA,Gray Catbird,Dumetella carolinensis,Dumetella carolinensis,Dumetella carolinensis,1,0
+HETH,Hermit Thrush,Catharus guttatus,Catharus guttatus,Catharus guttatus,0,0
+HEWA,Hermit Warbler,Setophaga occidentalis,Setophaga occidentalis,Dendroica occidentalis,0,0
+HOWA,Hooded Warbler,Setophaga citrina,Setophaga citrina,Wilsonia citrina,1,0
+HOWR,House Wren,Troglodytes aedon,Troglodytes aedon,Troglodytes aedon,2,0
+INBU,Indigo Bunting,Passerina cyanea,Passerina cyanea,Passerina cyanea,2,0
+KEWA,Kentucky Warbler,Geothlypis formosa,Geothlypis formosa,Oporornis formosus,1,0
+LAZB,Lazuli Bunting,Passerina amoena,Passerina amoena,Passerina amoena,1,0
+LISP,Lincoln's Sparrow,Melospiza lincolnii,Melospiza lincolnii,Melospiza lincolnii,0,0
+LOWA,Louisiana Waterthrush,Parkesia motacilla,Parkesia motacilla,Seiurus motacilla,1,1
+MGWA,MacGillivray's Warbler,Geothlypis tolmiei,Geothlypis tolmiei,Oporornis tolmiei,0,0
+MOCH,Mountain Chickadee,Poecile gambeli,Poecile gambeli,Parus gambeli,0,0
+NAWA,Nashville Warbler,Leiothlypis ruficapilla,Leiothlypis ruficapilla,Vermivora ruficapilla,0,0
+NOCA,Northern Cardinal,Cardinalis cardinalis,Cardinalis cardinalis,Cardinalis cardinalis,1,0
+OCWA,Orange-crowned Warbler,Leiothlypis celata,Leiothlypis celata,Vermivora celata,0,0
+ORJU,Oregon Junco,Junco hyemalis,Junco hyemalis,Junco hyemalis,1,0
+OVEN,Ovenbird,Seiurus aurocapilla,Seiurus aurocapilla,Seiurus aurocapilla,1,1
+PABU,Painted Bunting,Passerina ciris,Passerina ciris,Passerina ciris,2,0
+PUFI,Purple Finch,Haemorhous purpureus,Haemorhous purpureus,Carpodacus purpureus,0,0
+RBSA,Red-breasted Sapsucker,Sphyrapicus ruber,Sphyrapicus ruber,Sphyrapicus ruber,0,0
+REVI,Red-eyed Vireo,Vireo olivaceus,Vireo olivaceus,Vireo olivaceus,0,0
+SOSP,Song Sparrow,Melospiza melodia,Melospiza melodia,Melospiza melodia,2,0
+SPTO,Spotted Towhee,Pipilo maculatus,Pipilo maculatus,Pipilo maculatus,0,0
+SWTH,Swainson's Thrush,Catharus ustulatus,Catharus ustulatus,Catharus ustulatus,0,0
+TUTI,Tufted Titmouse,Baeolophus bicolor,Baeolophus bicolor,Baeolophus bicolor,0,0
+VEER,Veery,Catharus fuscescens,Catharus fuscescens,Catharus fuscescens,3,3
+WAVI,Warbling Vireo,Vireo gilvus,Vireo gilvus,Vireo gilvus,0,0
+WEFL,Western Flycatcher,Empidonax difficilis,Empidonax difficilis,Empidonax difficilis,1,0
+WETA,Western Tanager,Piranga ludoviciana,Piranga ludoviciana,Piranga ludoviciana,0,0
+WEVI,White-eyed Vireo,Vireo griseus,Vireo griseus,Vireo griseus,0,0
+WEWP,Western Wood-Pewee,Contopus sordidulus,Contopus sordidulus,Contopus sordidulus,1,0
+WIWA,Wilson's Warbler,Cardellina pusilla,Cardellina pusilla,Wilsonia pusilla,2,0
+WOTH,Wood Thrush,Hylocichla mustelina,Hylocichla mustelina,Hylocichla mustelina,1,0
+WREN,Wrentit,Chamaea fasciata,Chamaea fasciata,Chamaea fasciata,0,0
+YBCH,Yellow-breasted Chat,Icteria virens,Icteria virens,Icteria virens,2,0
+YEWA,Yellow Warbler,Setophaga petechia,Setophaga petechia,Dendroica petechia,1,0
+BUOR,Bullock's Oriole,Icterus bullockiorum,Icterus bullockii,Icterus bullockii,1,0
+HOFI,House Finch,Haemorhous mexicanus,Haemorhous mexicanus,Carpodacus mexicanus,0,1
+HAFL,Hammond's Flycatcher,Empidonax hammondii,Empidonax hammondii,Empidonax hammondii,0,0
+RBNU,Red-breasted Nuthatch,Sitta canadensis,Sitta canadensis,Sitta canadensis,0,0
+LEGO,Lesser Goldfinch,Spinus psaltria,Spinus psaltria,Carduelis psaltria,0,0
+BWWA,Blue-winged Warbler,Vermivora cyanoptera,Vermivora cyanoptera,Vermivora pinus,0,0

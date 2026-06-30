@@ -47,3 +47,8 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+.Rproj.user
+
+# Large data files that are too big for GitHub
+MAPS_BANDING_capture_data.csv
+MAPS_EFFORT_net_open_and_close_times.csv
