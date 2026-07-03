@@ -1,7 +1,6 @@
 model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
-MinAdultLH,NA,NA,fixed,NA,Intercept,1.25,0.317,0.57,1.831,1,4134.521,4505.963
-MinAdultLH,NA,NA,fixed,NA,scMaximum.longevity,0.309,0.178,-0.044,0.653,1,5168.462,5287.584
-MinAdultLH,NA,NA,fixed,NA,sclitter_or_clutch_size_n,-0.232,0.153,-0.538,0.07,1.001,4816.8,5210.859
-MinAdultLH,NA,NA,fixed,NA,scAdult.survival,-0.394,0.152,-0.697,-0.09,1.001,4612.186,5411.655
-MinAdultLH,NA,NA,fixed,NA,scbroodvalue,0.024,0.128,-0.226,0.277,1,5049.231,4958.063
-MinAdultLH,NA,NA,random,BirdTree,sd(Intercept),0.479,0.189,0.12,0.896,1.003,2614.317,2019.028
+MinAdultLH,NA,NA,fixed,NA,Intercept,1.257,0.308,0.603,1.832,1,4934.383,4795.294
+MinAdultLH,NA,NA,fixed,NA,scMaximum.longevity,0.286,0.144,0.001,0.573,1,5257.434,5194.153
+MinAdultLH,NA,NA,fixed,NA,sclitter_or_clutch_size_n,-0.228,0.148,-0.514,0.069,1,5494.372,5194.727
+MinAdultLH,NA,NA,fixed,NA,scAdult.survival,-0.382,0.148,-0.673,-0.095,1,5156.546,5404.075
+MinAdultLH,NA,NA,random,BirdTree,sd(Intercept),0.47,0.181,0.129,0.842,1.002,2918.644,2909.216

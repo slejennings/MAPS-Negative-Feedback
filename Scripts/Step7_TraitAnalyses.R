@@ -112,15 +112,14 @@ dat_LH <- dat_LH |>
   dplyr::mutate(
     scMaximum.longevity      = as.numeric(scale(Maximum.longevity)),
     sclitter_or_clutch_size_n= as.numeric(scale(litter_or_clutch_size_n)),
-    scAdult.survival         = as.numeric(scale(Adult.survival)),
-    scbroodvalue             = as.numeric(scale(broodvalue))
+    scAdult.survival         = as.numeric(scale(Adult.survival))
   )
 
 ##################################################################################
 ### Life History Model 1 ###
 
 # Response variable: number of adults at onset of DD effects (min_adult) 
-# Explanatory variables: longevity, clutch size, adult survival, brood value
+# Explanatory variables: longevity, clutch size, adult survival
 # Using negative binomial distribution for model
 
 # center Intercept near the typical count on the log scale
@@ -148,7 +147,7 @@ priors_nb_LH
 
 # run NB model
 minadult_LH_mod_nb <- brm(
-  min_adult ~ scMaximum.longevity + sclitter_or_clutch_size_n + scAdult.survival + scbroodvalue + (1|gr(BirdTree, cov = LH_cov)),
+  min_adult ~ scMaximum.longevity + sclitter_or_clutch_size_n + scAdult.survival + (1|gr(BirdTree, cov = LH_cov)),
   data = dat_LH,
   family = negbinomial(),
   data2 = list(LH_cov = LH_cov),
@@ -172,7 +171,7 @@ fixef(minadult_LH_mod_nb, probs=c(0.075, 0.925)) # look at 85% CrI
 
 # negative relationship for adult survival. 95% CrI does not overlap zero
 # negative trend for clutch size. 85% CrI does not overlap zero
-# positive relationship for longevity. 90% CrI does not overlap zero
+# positive relationship for longevity. 95% CrI does not overlap zero
 
 # trace and density plots
 color_scheme_set("brightblue")
@@ -199,14 +198,13 @@ max(dat_LH$scAdult.survival)  # 3.56
 # we also need the mean values of the other response variables
 mean(dat_LH$scMaximum.longevity) # 0
 mean(dat_LH$sclitter_or_clutch_size_n) # 0
-mean(dat_LH$scbroodvalue) # 0
+
 
 # get predicted values for adult survival
 survival_minadult_epred <- minadult_LH_mod_nb %>% 
   epred_draws(newdata = tibble(scAdult.survival = seq(-3, 3.6, 0.1), # create a sequence from the min to the max using intervals of 0.1
                                scMaximum.longevity = c(0), # fix max longevity at mean
-                               sclitter_or_clutch_size_n = c(0),
-                               scbroodvalue = c(0)), re_formula = NA)
+                               sclitter_or_clutch_size_n = c(0)), re_formula = NA)
 
 # make plot
 (minadult_survival_plot <- ggplot(survival_minadult_epred, aes(x = scAdult.survival, y = .epred)) +
@@ -216,7 +214,7 @@ survival_minadult_epred <- minadult_LH_mod_nb %>%
   labs(x = "Scaled Adult Survival", y = "Density Dependence Threshold") +
   theme_classic() +
   geom_point(data = dat_LH, aes(x= scAdult.survival, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 45)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
+  coord_cartesian(ylim=c(0, 30)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
   theme(axis.text.x = element_text(size=12), 
         axis.text.y = element_text(size=12), 
         axis.title.x = element_text(size=14), 
@@ -231,14 +229,12 @@ max(dat_LH$sclitter_or_clutch_size_n)  # 3.39
 # we also need the mean values of the other response variables
 mean(dat_LH$scMaximum.longevity) # 0
 mean(dat_LH$scAdult.survival) # 0
-mean(dat_LH$scbroodvalue) # 0
 
 # get predicted values for clutch size
 clutch_minadult_epred <- minadult_LH_mod_nb %>% 
   epred_draws(newdata = tibble(sclitter_or_clutch_size_n = seq(-1.4, 3.4, 0.1), # create a sequence from the min to the max using intervals of 0.1
                                scMaximum.longevity = c(0), # fix at mean
-                               scAdult.survival = c(0),
-                               scbroodvalue = c(0)), re_formula = NA)
+                               scAdult.survival = c(0)), re_formula = NA)
 
 # make plot
 (minadult_clutch_plot <-ggplot(clutch_minadult_epred, aes(x = sclitter_or_clutch_size_n, y = .epred)) +
@@ -263,14 +259,12 @@ max(dat_LH$scMaximum.longevity)  # 3.6
 # we also need the mean values of the other response variables
 mean(dat_LH$sclitter_or_clutch_size_n) # 0
 mean(dat_LH$scAdult.survival) # 0
-mean(dat_LH$scbroodvalue) # 0
 
 # get predicted values for clutch size
 longevity_minadult_epred <- minadult_LH_mod_nb %>% 
   epred_draws(newdata = tibble(scMaximum.longevity = seq(-2, 3.6, 0.1), # create a sequence from the min to the max using intervals of 0.1
                                sclitter_or_clutch_size_n = c(0), # fix at mean
-                               scAdult.survival = c(0),
-                               scbroodvalue = c(0)), re_formula = NA)
+                               scAdult.survival = c(0)), re_formula = NA)
 
 # make plot
 (minadult_longevity_plot <- ggplot(longevity_minadult_epred, aes(x = scMaximum.longevity, y = .epred)) +
@@ -280,7 +274,7 @@ longevity_minadult_epred <- minadult_LH_mod_nb %>%
   labs(x = "Scaled Maximum Longevity", y = "Density Dependence Threshold") +
   theme_classic() +
   geom_point(data = dat_LH, aes(x= scMaximum.longevity, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 40)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
+  coord_cartesian(ylim=c(0, 30)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
   theme(axis.text.x = element_text(size=12), 
         axis.text.y = element_text(size=12), 
         axis.title.x = element_text(size=14), 
@@ -292,7 +286,7 @@ longevity_minadult_epred <- minadult_LH_mod_nb %>%
 ### Life History Model 2 ###
 
 # Response variable: estimated intensity (slope) of density dependence
-# Explanatory variables: longevity, clutch size, adult survival, brood value
+# Explanatory variables: longevity, clutch size, adult survival
 
 
 # Take the absolute value of the slope estimate to make all the values positive 
@@ -327,7 +321,7 @@ priors_logn_LH
 # set init to "random" to reduce starting at extreme values
 
 slope_LH_mod_logn <- brm(
-  abs(estimate) ~ scMaximum.longevity + sclitter_or_clutch_size_n + scAdult.survival+ scbroodvalue + (1|gr(BirdTree, cov = LH_cov)),
+  abs(estimate) ~ scMaximum.longevity + sclitter_or_clutch_size_n + scAdult.survival + (1|gr(BirdTree, cov = LH_cov)),
   data = dat_LH,
   family = lognormal(link="identity"),
   data2 = list(LH_cov = LH_cov),
@@ -348,10 +342,11 @@ summary(slope_LH_mod_logn)
 tidy(slope_LH_mod_logn)
 #  ESS and Rhat look fine
 
-fixef(slope_LH_mod_logn, probs=c(0.05, 0.95)) # look at 90% CI
+fixef(slope_LH_mod_logn, probs=c(0.05, 0.95)) # look at 90% CrI
+fixef(slope_LH_mod_logn, probs=c(0.075, 0.925)) # look at 85% CrI
 
 # positive relationship for clutch size. 95% CrI does not overlap zero
-# positive relationship for adult survival. 90% CrI does not overlap (90% CI)
+# positive relationship for adult survival. 90% CrI does not overlap 
 
 
 # trace and density plots
@@ -382,14 +377,12 @@ max(dat_LH$scAdult.survival)  # 3.55
 # we also need the mean values of the other response variables
 mean(dat_LH$scMaximum.longevity) # 0
 mean(dat_LH$sclitter_or_clutch_size_n) # 0
-mean(dat_LH$scbroodvalue) # 0
 
 # get predicted values for adult survival
 survival_slope_epred <- slope_LH_mod_logn %>% 
   epred_draws(newdata = tibble(scAdult.survival = seq(-3, 3.6, 0.1), # create a sequence from the min to the max using intervals of 0.1
                                scMaximum.longevity = c(0), # fix at mean
-                               sclitter_or_clutch_size_n = c(0),
-                               scbroodvalue = c(0)), re_formula = NA)
+                               sclitter_or_clutch_size_n = c(0)), re_formula = NA)
 
 # make plot
 (slope_survival_plot <- ggplot(survival_slope_epred, aes(x = scAdult.survival, y = .epred)) +
@@ -399,7 +392,7 @@ survival_slope_epred <- slope_LH_mod_logn %>%
   labs(x = "Scaled Adult Survival", y = "Intensity of Density Dependence)") +
   theme_classic() +
   geom_point(data = dat_LH, aes(x= scAdult.survival, y = abs(estimate)), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 0.35)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
+  coord_cartesian(ylim=c(0, 0.3)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
   theme(axis.text.x = element_text(size=12), 
         axis.text.y = element_text(size=12), 
         axis.title.x = element_text(size=14), 
@@ -414,14 +407,12 @@ max(dat_LH$sclitter_or_clutch_size_n)  # 3.4
 # we also need the mean values of the other response variables
 mean(dat_LH$scMaximum.longevity) # 0
 mean(dat_LH$scAdult.survival) # 0
-mean(dat_LH$scbroodvalue) # 0
 
 # get predicted values for clutch size
 clutch_slope_epred <- slope_LH_mod_logn %>% 
   epred_draws(newdata = tibble(sclitter_or_clutch_size_n = seq(-1.4, 3.4, 0.1), # create a sequence from the min to the max using intervals of 0.1
                                scMaximum.longevity = c(0), # fix at mean
-                               scAdult.survival = c(0),
-                               scbroodvalue = c(0)), re_formula = NA)
+                               scAdult.survival = c(0)), re_formula = NA)
 
 # make plot
 (slope_clutch_plot <- ggplot(clutch_slope_epred, aes(x = sclitter_or_clutch_size_n, y = .epred)) +
@@ -431,7 +422,7 @@ clutch_slope_epred <- slope_LH_mod_logn %>%
   labs(x = "Scaled Clutch Size", y = "Intensity of Density Dependence") +
   theme_classic() +
   geom_point(data = dat_LH, aes(x= sclitter_or_clutch_size_n, y = abs(estimate)), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 0.5)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
+  coord_cartesian(ylim=c(0, 0.3)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
   theme(axis.text.x = element_text(size=12), 
         axis.text.y = element_text(size=12), 
         axis.title.x = element_text(size=14), 
@@ -771,7 +762,7 @@ trophiclevel_minadult_epred <- minadult_Trophic_mod_nb %>%
   labs(x = "Scaled Trophic Level", y = "Density Dependence Threshold") +
   theme_classic() +
   geom_point(data = dat_trophic, aes(x= scTrophicLevel, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 30)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
+  coord_cartesian(ylim=c(0, 20)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
   theme(axis.text.x = element_text(size=12), 
         axis.text.y = element_text(size=12), 
         axis.title.x = element_text(size=14), 
@@ -875,7 +866,7 @@ strata_slope_epred <- slope_Trophic_mod_logn %>%
     labs(x = "Scaled Trophic Strata", y = "Intensity of Density Dependence") +
     theme_classic() +
     geom_point(data = dat_trophic, aes(x= scStrata, y = abs(estimate)), pch = 19, color = "gray30") +
-    coord_cartesian(ylim=c(0, 0.25)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
+    coord_cartesian(ylim=c(0, 0.2)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
     theme(axis.text.x = element_text(size=12), 
           axis.text.y = element_text(size=12), 
           axis.title.x = element_text(size=14), 

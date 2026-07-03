@@ -120,7 +120,6 @@ head(clutch) # scientific_name is the sci name with genus and species separated 
 
 ### sexual selection trait files ###
 delhey <- read.csv(here("Data", "delhey.csv"), header=T) # Delhey et al. 2023
-# note: we explored territoriality as a possibility, but did not keep it
 # Dehley et al. 2023 has scores that reflect the intensity of sexual selection on males and females 
 
 # plumage scores from males and females that we will use to calculate sexual dichromatism
@@ -270,7 +269,7 @@ mapsDD_morphometrics <- left_join(mapsDD_massHWI, mapsDD_pigot)
 ##########################################################################################
 #### life history traits #####
 
-### life history trait 1: adult survival (and longevity for calculating brood value) 
+### life history traits 1 & 2: adult survival and longevity 
 # Bird et al. uses BirdLife taxonomy
 # we are interested in Maximum.longevity and Adult.survival from this data set
 
@@ -295,7 +294,7 @@ mean(mapsDD_longevity$Adult.survival) # The mean is 0.52
 hist(mapsDD_longevity$Adult.survival)
 
 
-### Life history trait 2: clutch size (and number of clutches per year for calculating brood value) 
+### Life history trait 3: clutch size
 head(clutch) 
 
 # joining first using BirdLife scientific names, second using BirdTree names, and then joining both together to maximize matches
@@ -307,22 +306,17 @@ mapsDD_clutch_BT <- clutch %>% rename(Species3_BirdTree = scientific_name) %>%
 
 mapsDD_clutch <- full_join(mapsDD_clutch_BL, mapsDD_clutch_BT) %>%
   select(SPEC, COMMONNAME, Species1_BirdLife, Species2_eBird, Species3_BirdTree,
-         litter_or_clutch_size_n, litters_or_clutches_per_y)
+         litter_or_clutch_size_n)
 nrow(mapsDD_clutch) # all 62 species
-View(mapsDD_clutch) # hermit warbler and Hammond's flycatcher are missing clutches per year
-# add this value manually
-# data came from Birds of the World species accounts
-mapsDD_clutch$litters_or_clutches_per_y[mapsDD_clutch$COMMONNAME == "Hermit Warbler"] <- 1.00
-mapsDD_clutch$litters_or_clutches_per_y[mapsDD_clutch$COMMONNAME == "Hammond's Flycatcher"] <- 1.00
+View(mapsDD_clutch)
 
 ### Life history trait 3: brood value
 # combine longevity with clutch traits and calculate brood value
 mapsDD_lifehistory <-
-  left_join(mapsDD_longevity, mapsDD_clutch) %>%
-  mutate(broodvalue = log(1/(Maximum.longevity*litters_or_clutches_per_y))) # brood value calculation
+  left_join(mapsDD_longevity, mapsDD_clutch) 
 
 hist(mapsDD_lifehistory$Adult.survival)
-hist(mapsDD_lifehistory$broodvalue)
+hist(mapsDD_lifehistory$Maximum.longevity)
 hist(mapsDD_lifehistory$litter_or_clutch_size_n)
 
 ##########################################################################################

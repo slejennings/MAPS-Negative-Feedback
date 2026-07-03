@@ -385,10 +385,9 @@ length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames
 length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species3_BirdTree))
 
 # Join the species density dependence measures and the bird scientific names 
-DDspp_dat <- left_join(ave_negative_slope_m2, DDspp_names, by = "SPEC") %>%
-  mutate(Species3_BirdTree = str_replace(Species3_BirdTree, " ", "_")) # replace blanks in Genus species with underscore
-
-row.names(DDspp_dat) <- DDspp_dat$Species3_BirdTree # set column as rownames
+DDspp_dat <- left_join(DDspp_names, ave_negative_slope_m2, by = "SPEC") %>%
+  mutate(Species3_BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # replace blanks in Genus species with underscore
+  column_to_rownames(., var="Species3_BirdTree")
 
 head(DDspp_dat)
 
@@ -397,25 +396,35 @@ et <- treedata(tree_out, DDspp_dat, sort=T)
 
 # Is there phylogenetic signal in the minimum adults to trigger density dependence (threshold)?
 # using lambda as a measure of phylogenetic signal
-lambda_threshold <- fitContinuous(et$phy, DDspp_dat[3], model = "lambda")
+lambda_threshold <- fitContinuous(et$phy, DDspp_dat[7], model = "lambda")
 lambda_threshold 
 
+
 ## Is there phylogenetic signal in the average slope (intensity)?
-lambda_slope <- fitContinuous(et$phy, DDspp_dat[7], model = "lambda")
+lambda_slope <- fitContinuous(et$phy, DDspp_dat[11], model = "lambda")
 lambda_slope
 
 # Visualize estimates of threshold and intensity on tree
+
+hist(DDspp_dat$min_adult)
+hist(sqrt(DDspp_dat$min_adult))
+hist(log1p(DDspp_dat$min_adult))
+
 phytree <-et$phy # get phylo tree for plotting
-threshold <- data.frame(DDspp_dat[3]) # threshold values for each species
-intensity <- data.frame(DDspp_dat[7])
 circ <- ggtree::ggtree(phytree , layout='circular') # circular phylogeny
 
-threshold_plot <- gheatmap(circ, threshold, offset=.8, width=.2, colnames =F,
-               colnames_angle=95, colnames_offset_y = .25) +
-  scale_fill_viridis_c(option="A", name="lambda = 0.205\n \nMinimum\nAdult Abundance")
-threshold_plot
+threshold <- data.frame(DDspp_dat[7]) # threshold values for each species
+threshold_log1p <- data.frame(log1p(DDspp_dat[7])) # log x+1 transformed threshold values for each species
 
-intensity_plot <- gheatmap(circ, intensity, offset=.8, width=.2, colnames =F,
+intensity <- data.frame(DDspp_dat[11])
+intensity <- data.frame(log(abs(DDspp_dat[11])))
+
+
+(threshold_plot <- gheatmap(circ, threshold_log1p, offset=.8, width=.2, colnames =F,
+               colnames_angle=95, colnames_offset_y = .25) +
+  scale_fill_viridis_c(option="A", name="lambda = 0.56\n \nMinimum\nAdult Abundance"))
+
+
+(intensity_plot <- gheatmap(circ, intensity, offset=.8, width=.2, colnames =F,
                            colnames_angle=95, colnames_offset_y = .25) +
-  scale_fill_viridis_c(option="A", name="lambda = 0.205\n \nMean\nSlope")
-intensity_plot
+  scale_fill_viridis_c(option="A", name="lambda = 0.73\n \nMean\nSlope"))
