@@ -245,19 +245,32 @@ slopes_m2 <- m2_onlymodels %>%
                           newdata = datagrid(Adult=seq(0, .y, 1)), # sequence along from zero to max number of adults for each species
                           variables = "Adult", 
                           type = "response",  # this incorporates both hu and mu models and back transforms the values to be in original scale of variables
+                          re_formula = NA))) %>% # extract the posterior draws from the object produced by slopes()
+  select(-m2)
+
+
+
+slopes_m2 <- m2_onlymodels %>%
+  left_join(., max) %>%
+  mutate(
+    slopes = map2(m2, maxAdult, # map over both the model and the max number of adults for each species
+                  ~slopes(.x,  # use slopes() in marginaleffects package
+                          newdata = datagrid(Adult=seq(0, .y, 1)), # sequence along from zero to max number of adults for each species
+                          variables = "Adult", 
+                          type = "response",  # this incorporates both hu and mu models and back transforms the values to be in original scale of variables
                           re_formula = NA)),
     post_draws = map(slopes, ~ posterior_draws(.x)) # extract the posterior draws from the object produced by slopes()
   ) %>%
   select(-m2)
 
 # put results into a data frame to make them easier to manipulate
-slopedraws_m2_df <- slopes_m2 %>% 
-  select(SPEC, post_draws) %>%
-  pull(post_draws, name=SPEC) %>% 
+slopes_m2_df <- slopes_m2 %>% 
+  pull(slopes, name=SPEC) %>% 
   bind_rows(., .id="SPEC")
 
+
 # classify the slope as either positive, negative or zero (flat) using the confidence interval
-slopesign_m2 <- slopedraws_m2_df %>% 
+slopesign_m2 <- slopes_m2_df %>% 
   select(SPEC, estimate, conf.low, conf.high, Adult) %>% 
   distinct() %>%
   mutate(slope_sign = factor(if_else( conf.low > 0 & conf.high >0, "positive",
@@ -292,13 +305,13 @@ ave_slope_m2 <-  m2_onlymodels %>%
                                 newdata = datagrid(Adult = seq(min, max, by=1)), # use the min and max values of adults for each species
                                 variables = "Adult",
                                 type = "response",
-                                re_formula = NA)),
-    post_draws = map(ave_slope, ~ posterior_draws(.x)) # extract the posterior draws from the object produced by slopes()
+                                re_formula = NA))
   ) 
 
 ave_negative_slope_m2 <- ave_slope_m2 %>% 
   unnest(ave_slope) %>% # unnest the results
-  dplyr::select(-m2, -post_draws) # remove columns that are not needed
+  dplyr::select(-m2) # remove columns that are not needed
+
 
 saveRDS(ave_negative_slope_m2, here("Outputs", "AverageNegativeSlopebySpecies_m2.rds"))
 write.csv(ave_negative_slope_m2, here("Outputs", "AverageNegativeSlopebySpecies_m2.csv"))
