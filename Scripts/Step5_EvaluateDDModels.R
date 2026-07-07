@@ -204,12 +204,14 @@ epred_m2 <- m2_onlymodels %>%
   left_join(., max) %>%
   mutate(
     epred_draws = map2(m2, maxAdult, # map over both the model and the max number of adults for each species
-                       ~epred_draws(newdata = tibble(Adult=seq(0, .y, 1)), object =.x, re_formula = NA)) 
+                       ~epred_draws(newdata = tibble(Adult=seq(0, .y, 1)), object =.x, re_formula = NA, ndraws=500)) 
   )
 
 # put results into a data frame to make them easier to manipulate
 epred_df_m2 <- epred_m2 %>% pull(epred_draws, name=SPEC) %>% bind_rows(., .id="SPEC")
 
+# save object to use later to make figures
+saveRDS(epred_df_m2, here("Outputs", "epred_df_m2.rds"))
 
 # create plots of the conditional effects of Adult abundance on productivity
 # we want one plot per species
@@ -246,21 +248,6 @@ slopes_m2 <- m2_onlymodels %>%
                           variables = "Adult", 
                           type = "response",  # this incorporates both hu and mu models and back transforms the values to be in original scale of variables
                           re_formula = NA))) %>% # extract the posterior draws from the object produced by slopes()
-  select(-m2)
-
-
-
-slopes_m2 <- m2_onlymodels %>%
-  left_join(., max) %>%
-  mutate(
-    slopes = map2(m2, maxAdult, # map over both the model and the max number of adults for each species
-                  ~slopes(.x,  # use slopes() in marginaleffects package
-                          newdata = datagrid(Adult=seq(0, .y, 1)), # sequence along from zero to max number of adults for each species
-                          variables = "Adult", 
-                          type = "response",  # this incorporates both hu and mu models and back transforms the values to be in original scale of variables
-                          re_formula = NA)),
-    post_draws = map(slopes, ~ posterior_draws(.x)) # extract the posterior draws from the object produced by slopes()
-  ) %>%
   select(-m2)
 
 # put results into a data frame to make them easier to manipulate
@@ -326,8 +313,6 @@ confintr::ci_cor(ave_negative_slope_m2$min_adult, ave_negative_slope_m2$estimate
 # load additional packages
 library(ape)
 library(geiger)
-library(ggtree)
-library(ggtreeExtra)
 
 # import data
 DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
@@ -398,11 +383,12 @@ length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames
 length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species3_BirdTree))
 
 # Join the species density dependence measures and the bird scientific names 
-DDspp_dat <- left_join(DDspp_names, ave_negative_slope_m2, by = "SPEC") %>%
+DDspp_dat <- left_join(DDspp_allnames, ave_negative_slope_m2, by = "SPEC") %>%
   mutate(Species3_BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # replace blanks in Genus species with underscore
   column_to_rownames(., var="Species3_BirdTree")
 
 head(DDspp_dat)
+nrow(DDspp_dat) # should be 62
 
 # link data to phylogenetic tree
 et <- treedata(tree_out, DDspp_dat, sort=T)
@@ -417,27 +403,3 @@ lambda_threshold
 lambda_slope <- fitContinuous(et$phy, DDspp_dat[11], model = "lambda")
 lambda_slope
 
-# Visualize estimates of threshold and intensity on tree
-
-hist(DDspp_dat$min_adult)
-hist(sqrt(DDspp_dat$min_adult))
-hist(log1p(DDspp_dat$min_adult))
-
-phytree <-et$phy # get phylo tree for plotting
-circ <- ggtree::ggtree(phytree , layout='circular') # circular phylogeny
-
-threshold <- data.frame(DDspp_dat[7]) # threshold values for each species
-threshold_log1p <- data.frame(log1p(DDspp_dat[7])) # log x+1 transformed threshold values for each species
-
-intensity <- data.frame(DDspp_dat[11])
-intensity <- data.frame(log(abs(DDspp_dat[11])))
-
-
-(threshold_plot <- gheatmap(circ, threshold_log1p, offset=.8, width=.2, colnames =F,
-               colnames_angle=95, colnames_offset_y = .25) +
-  scale_fill_viridis_c(option="A", name="lambda = 0.56\n \nMinimum\nAdult Abundance"))
-
-
-(intensity_plot <- gheatmap(circ, intensity, offset=.8, width=.2, colnames =F,
-                           colnames_angle=95, colnames_offset_y = .25) +
-  scale_fill_viridis_c(option="A", name="lambda = 0.73\n \nMean\nSlope"))
