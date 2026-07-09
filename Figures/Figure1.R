@@ -143,6 +143,11 @@ sequential_hcl(9, "Purples") # get hex codes
 # Threshold: I used "#8B7EBB" to fill the histogram and "#3D1778" to outline the histogram bars
 
 
+#################################################################
+### Add annotations for Panel B of Figure 1 ###
+
+#TypeII
+#TypeII + annotate("segment", x = 2, xend = 2, y = 0.65, yend = 0.45, colour = "#583A99", linewidth = 1.8, linetype = 2) + annotate("text", x = 6, y = 0.6, label = "Threshold", size = 5, colour = "#583A99") +  annotate("segment", x = 7.8, y = 0.35, xend = 9.8, yend = 0.5, linewidth = 1.8, color = "#0E3F5C") + annotate("segment", x =24.8, y= 0.03, xend = 26.8, yend = 0.18, linewidth = 1.8, color = "#0E3F5C") + annotate("segment", x = 9.8, xend = 26.8, y = 0.5, yend = 0.18, linewidth = 1.8, color = "#0E3F5C") + annotate("segment", x = 7.8, xend = 24.8, y = 0.35, yend = 0.03, linewidth = 1.8, color = "#0E3F5C") + annotate("text", x = 18.3, y = 0.43, label = "Intensity", size = 5, colour = "#0E3F5C") #Need to adjust based on 7/9 meeting
 
 #################################################################
 ### Combine Panels ###
@@ -150,7 +155,6 @@ sequential_hcl(9, "Purples") # get hex codes
 Fig1 <- MAPS_map + TypeII + 
   plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
-
 
 Fig1
 
