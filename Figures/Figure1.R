@@ -22,6 +22,7 @@ library(terra)
 library(colorspace)
 library(rnaturalearth)
 library(ggdist)
+library(ggnewscale)
 library(patchwork)
 
 #################################################################
@@ -103,7 +104,7 @@ threshold_curve <- SPEC_dat %>% filter(Adult<=5) %>% mutate(group="A")
 intensity_curve <- SPEC_dat %>% filter(Adult>4) %>% mutate(group="B")
 
 # get points where we obtained the slope/intensity
-slopepoints <- Part2 %>% 
+slopepoints <- intensity_curve %>% 
   group_by(Adult) %>% 
   summarize(predictprod = mean(.epred)) 
 
@@ -135,7 +136,7 @@ TypeII <- ggplot() +
 
 
 TypeII
-# note: might give a warning message about missing values because we are trimming the x-axis so some data is not being plotted
+# note: will likely give a warning message about missing values because we are trimming the x-axis so some data is not being plotted
 
 
 

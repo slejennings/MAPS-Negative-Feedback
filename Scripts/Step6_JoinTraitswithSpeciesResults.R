@@ -295,6 +295,7 @@ hist(mapsDD_longevity$Adult.survival)
 
 
 ### Life history trait 3: clutch size
+# from Myhrvold et al. 2015
 head(clutch) 
 
 # joining first using BirdLife scientific names, second using BirdTree names, and then joining both together to maximize matches
@@ -310,8 +311,7 @@ mapsDD_clutch <- full_join(mapsDD_clutch_BL, mapsDD_clutch_BT) %>%
 nrow(mapsDD_clutch) # all 62 species
 View(mapsDD_clutch)
 
-### Life history trait 3: brood value
-# combine longevity with clutch traits and calculate brood value
+# combine longevity and adult survival with clutch traits
 mapsDD_lifehistory <-
   left_join(mapsDD_longevity, mapsDD_clutch) 
 
