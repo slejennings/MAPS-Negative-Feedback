@@ -94,39 +94,50 @@ MAPS_map
 ### Create Panel B of Figure 1: Species curve with extracted response variables ###
 
 # get data for species with a Type II curve
-
+# using NOCA
 SPEC_dat <- epred_df_m2 %>%
   filter(SPEC == "NOCA") # specify the species to keep
 
+# split the curve into the sections that represent threshold and intensity, respectively
+threshold_curve <- SPEC_dat %>% filter(Adult<=5) %>% mutate(group="A")
+intensity_curve <- SPEC_dat %>% filter(Adult>4) %>% mutate(group="B")
+
+# get points where we obtained the slope/intensity
+slopepoints <- Part2 %>% 
+  group_by(Adult) %>% 
+  summarize(predictprod = mean(.epred)) 
+
+# points with some jitter to place them above the curve
+slopepoints_jitter <- intensity_curve %>% 
+  group_by(Adult) %>% 
+  summarize(predictprod =mean(.epred)) %>% 
+  mutate(predictprod = predictprod + 0.02) # add a small amount of jitter to move points up above the curve
+
 # create plot of single species with a Type II curve
-
-TypeII <- ggplot(data = SPEC_dat, aes(x = Adult, y = .epred)) + 
-  ggdist::stat_lineribbon(color = "#1874CD") + # change color here
-  scale_fill_manual(values = colorspace::lighten("#1874CD", c(0.95, 0.75, 0.5))) + # change color here
-  guides(fill = "none") +
+# using non-jittered points here. To change that, alter the data for geom_point() to use slopepoints_jitter
+TypeII <- ggplot() +
+  ggdist::stat_lineribbon(data = threshold_curve, aes(x = Adult, y = .epred, color=group)) + 
+  scale_fill_manual(values = colorspace::lighten("#8B7EBB", c(0.95, 0.75, 0.5))) + # change color of threshold error bars here
+  guides(fill = "none", color="none") +
+  ggnewscale::new_scale_fill() +
+  ggdist::stat_lineribbon(data = intensity_curve, aes(x = Adult, y = .epred, color = group)) +
+  scale_fill_manual(values = colorspace::lighten("#3F8489", c(0.95, 0.75, 0.5))) + # change color of intensity error bars here
+  scale_color_manual(values=c("#8B7EBB","#3F8489")) + # change color of curve lines here
+  guides(fill = "none", color = "none") +
   labs(x = "Adult Abundance", y = "Productivity") +
   theme_classic() +
   scale_x_continuous(limits = c(0, max(SPEC_dat$Adult)), expand = c(0, 0)) + # move the y-axis so it intercepts with 0 on x-axis
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
-        axis.text = element_text(size=10, family="Arial"))
-        
+        axis.text = element_text(size=10, family="Arial")) +
+  geom_point(data = slopepoints, aes(x=Adult, y=predictprod), size=2.5, color="#0E3F5C") + # add points and set their size, shape, color
+  xlim(0, 35) # set limits for the x-axis
+
 
 TypeII
+# note: might give a warning message about missing values because we are trimming the x-axis so some data is not being plotted
 
-# alternatively: if we want the curve without the errorbars
 
-TypeII <- ggplot(data = SPEC_dat, aes(x = Adult, y = .epred)) + 
-  geom_smooth(color = "#484554", linewidth=1) + # change color and linewidth here
-  guides(fill = "none") +
-  labs(x = "Adult Abundance", y = "Productivity") +
-  theme_classic() +
-  scale_x_continuous(limits = c(0, max(SPEC_dat$Adult)), expand = c(0, 0)) + # move the y-axis so it intercepts with 0 on x-axis
-  theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
-        axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
-        axis.text = element_text(size=10, family="Arial"))
-
-TypeII
 
 
 # COLOR CODES FOR ANNOTATING PLOT
