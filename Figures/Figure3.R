@@ -201,7 +201,7 @@ dt <- data.frame(node =c(123, 65, 70, 74, 84, 87, 92, 95, 102, 109),
     geom_cladelab(data = dt, 
                   mapping=aes(node=node, label=familyname, vjust=vjust, hjust=hjust), offset = 30, offset.text = 30, fontsize=4.5) +
     guides(color = guide_legend( # to style this legend individually to have different settings that Intensity and Threshold legends, use guides()
-    title = "Curve Type",
+    title = "Curve",
     position ="right",
     theme(legend.title.position = "top", # put legend title at top
           legend.title = element_text(size=12, margin=margin(b=8)), # change text for legend title
@@ -263,6 +263,7 @@ hcl_palettes(palette="DarkMint", n=9, plot=T) # look at palette used above for I
 sequential_hcl(9, "DarkMint") # get hex codes
 # try "#3F8489". Darkest is "#0E3F5C" for outline
 
+
 hcl_palettes(palette="Purples", n=9, plot=T) # look at palette used above for Threshold
 sequential_hcl(9, "Purples") # get hex codes
 # try "#8B7EBB", Darkest is "#3D1778" for outline
@@ -298,9 +299,9 @@ vars <- threshold_dat %>%
 
 ### Combine Figure Panels & Save ###
 
-wrap_elements(plot_spacer() + panelA + plot_spacer() + plot_layout(widths=c(0.05, 0.6, 0.05))) / 
+wrap_elements(plot_spacer() + panelA + plot_spacer() + plot_layout(widths=c(0.08, 0.55, 0.08))) / 
   wrap_elements(threshold_intensity_plot) +
-  plot_layout(heights=c(6,9)) & plot_annotation(tag_levels = "A") &
+  plot_layout(heights=c(7,10)) & plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
 
 

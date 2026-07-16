@@ -1,69 +1,69 @@
 Classification for species' conditional effects curves,
-Type I: negative slope across all values of adult abundance,
-Type II: flat slope before becoming negative,
-Type III: postive slope followed by flat then negative or just negative,
+Type 1: negative slope across all values of adult abundance,
+Type 2: flat slope before becoming negative,
+Type 3: postive slope followed by flat then negative or just negative,
 classifications determined by looking at SlopeSummarybySpecies_m2.csv,
 ,
 Species,Curve Type
-ACFL,I
-AMRE,II
-AMRO,II
-AUWA,II
-BAWW,II
-BCCH,I
-BEWR,III
-BHGR,II
-BRCR,II
-BUOR,II
-BUSH,III
-BWWA,II
-CACH,II
-CARW,I
-CBCH,II
-CHSP,II
-COYE,II
-DOWO,I
-DUFL,II
-EATO,II
-FISP,III
-GCKI,II
-GRCA,III
-HAFL,I
-HETH,II
-HEWA,I
-HOFI,III
-HOWA,III
-HOWR,II
-INBU,II
-KEWA,II
-LAZB,II
-LEGO,II
-LISP,III
-LOWA,II
-MGWA,II
-MOCH,II
-NAWA,II
-NOCA,II
-OCWA,II
-ORJU,II
-OVEN,II
-PABU,II
-PUFI,II
-RBNU,II
-RBSA,II
-REVI,II
-SOSP,III
-SPTO,II
-SWTH,II
-TUTI,II
-VEER,II
-WAVI,II
-WEFL,I
-WETA,II
-WEVI,II
-WEWP,I
-WIWA,II
-WOTH,II
-WREN,II
-YBCH,II
-YEWA,III
+ACFL,Type 1
+AMRE,Type 2
+AMRO,Type 2
+AUWA,Type 2
+BAWW,Type 2
+BCCH,Type 1
+BEWR,Type 3
+BHGR,Type 2
+BRCR,Type 2
+BUOR,Type 2
+BUSH,Type 3
+BWWA,Type 2
+CACH,Type 2
+CARW,Type 1
+CBCH,Type 2
+CHSP,Type 2
+COYE,Type 2
+DOWO,Type 1
+DUFL,Type 2
+EATO,Type 2
+FISP,Type 3
+GCKI,Type 2
+GRCA,Type 3
+HAFL,Type 1
+HETH,Type 2
+HEWA,Type 1
+HOFI,Type 3
+HOWA,Type 3
+HOWR,Type 2
+INBU,Type 2
+KEWA,Type 2
+LAZB,Type 2
+LEGO,Type 2
+LISP,Type 3
+LOWA,Type 2
+MGWA,Type 2
+MOCH,Type 2
+NAWA,Type 2
+NOCA,Type 2
+OCWA,Type 2
+ORJU,Type 2
+OVEN,Type 2
+PABU,Type 2
+PUFI,Type 2
+RBNU,Type 2
+RBSA,Type 2
+REVI,Type 2
+SOSP,Type 3
+SPTO,Type 2
+SWTH,Type 2
+TUTI,Type 2
+VEER,Type 2
+WAVI,Type 2
+WEFL,Type 1
+WETA,Type 2
+WEVI,Type 2
+WEWP,Type 1
+WIWA,Type 2
+WOTH,Type 2
+WREN,Type 2
+YBCH,Type 2
+YEWA,Type 3

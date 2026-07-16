@@ -59,7 +59,7 @@ RE_m2_df <- STA_RE_m2 %>%
 
 # get identifying info for each plot
 plotinfo <- SppNames_STA %>% 
-  select(SPEC, COMMONNAME, Curve_type) %>%
+  select(SPEC, COMMONNAME, Curve_Type) %>%
   distinct()
 
 # add identifiers to random effects plot data

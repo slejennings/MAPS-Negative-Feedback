@@ -401,14 +401,17 @@ et <- treedata(tree_out, DDspp_dat, sort=T)
 
 # Is there phylogenetic signal in the minimum adults to trigger density dependence (threshold)?
 # using lambda as a measure of phylogenetic signal
+set.seed(569)
 lambda_threshold <- fitContinuous(et$phy, DDspp_dat[8], model = "lambda")
 lambda_threshold 
 
 ## Is there phylogenetic signal in the average slope (intensity)?
 # with standard error of the intensity value included
+set.seed(327)
 lambda_slope <- fitContinuous(et$phy, DDspp_dat[12], SE=DDspp_dat[15], model = "lambda")
 lambda_slope
 
 ## Is there phylogenetic signal in the curve type classification?
+set.seed(418)
 lambda_curve <- fitDiscrete(et$phy, DDspp_dat[3], model = "ER", transform ="lambda")
 lambda_curve

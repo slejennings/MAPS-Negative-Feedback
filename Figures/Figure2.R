@@ -26,18 +26,18 @@ epred_df_m2 <- readRDS(here("Outputs", "epred_df_m2.rds"))
 
 
 #########################################################################
-# We are using 3 representative species to use as examples of a Type I, Type II and Type III productivity-abundance curve
+# We are using 3 representative species to use as examples of a Type 1, Type 2 and Type 3 productivity-abundance curve
 # Extract a data frame for each of our 3 chosen species
 
-# Type I = BCCH
+# Type 1 = BCCH
 BCCH_dat <- epred_df_m2 %>%
   filter(SPEC == "BCCH") # specify the species to keep
   
-# Type II - KEWA
+# Type 2 - KEWA
 KEWA_dat <- epred_df_m2 %>%
   filter(SPEC == "KEWA") # specify the species to keep
   
-# Type III - BEWR
+# Type 3 - BEWR
 BEWR_dat <- epred_df_m2 %>%
   filter(SPEC == "BEWR") # specify the species to keep
   
@@ -45,7 +45,7 @@ BEWR_dat <- epred_df_m2 %>%
 # Make a plot for each species
 
 # note: if you change the species, you'll need edit ggplot(data =) and scale_x_continuous(limits =)
-typeIplot <- ggplot(data = BCCH_dat, aes(x = Adult, y = .epred)) + 
+type1plot <- ggplot(data = BCCH_dat, aes(x = Adult, y = .epred)) + 
   ggdist::stat_lineribbon(color = "#DA4167") + # change color here
   scale_fill_manual(values = colorspace::lighten("#DA4167", c(0.95, 0.75, 0.5))) + # change color here
   guides(fill = "none") +
@@ -54,16 +54,14 @@ typeIplot <- ggplot(data = BCCH_dat, aes(x = Adult, y = .epred)) +
   scale_x_continuous(limits = c(0, max(BCCH_dat$Adult)), expand = c(0, 0)) + # move the y-axis so it intercepts with 0 on x-axis
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
-        axis.text = element_text(size=10, family="Arial"), 
+        axis.text = element_text(size=11, family="Arial"), 
         plot.title = element_text(size = 14, hjust = 0.5, family = "Arial"))
-typeIplot
+type1plot
 
-# we probably want to add a title or text annotation to this plot that says "Type I"
+# we probably want to add a title or text annotation to this plot that says "Type 1"
 # also, it could be useful to differentiate the types using colors
 
-
-
-typeIIplot <- ggplot(data = KEWA_dat, aes(x = Adult, y = .epred)) + 
+type2plot <- ggplot(data = KEWA_dat, aes(x = Adult, y = .epred)) + 
   ggdist::stat_lineribbon(color = "#29335C") + # change color here
   scale_fill_manual(values = colorspace::lighten("#29335C", c(0.95, 0.75, 0.5))) + # change color here
   guides(fill = "none") +
@@ -72,32 +70,27 @@ typeIIplot <- ggplot(data = KEWA_dat, aes(x = Adult, y = .epred)) +
   scale_x_continuous(limits = c(0, max(KEWA_dat$Adult)), expand = c(0, 0)) + # move the y-axis so it intercepts with 0 on x-axis
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
-        axis.text = element_text(size=10, family="Arial"), plot.title = element_text(size = 14, hjust = 0.5, family = "Arial"))
-typeIIplot 
+        axis.text = element_text(size=11, family="Arial"), 
+        plot.title = element_text(size = 14, hjust = 0.5, family = "Arial"))
+type2plot 
 
-typeIIIplot <- ggplot(data = BEWR_dat, aes(x = Adult, y = .epred)) + 
+type3plot <- ggplot(data = BEWR_dat, aes(x = Adult, y = .epred)) + 
   ggdist::stat_lineribbon(color = "#F5AF00") + 
   scale_fill_manual(values = colorspace::lighten("#F5AF00", c(0.95, 0.75, 0.5))) + # change color here
   guides(fill = "none") +
-  labs(x = "Adult Abundance", y = "Productivity", title = "Type 3") +
+  labs(x = "Adult Abundance", y = "Productivity", title = "Type 3 (n = 8)") +
   theme_classic() +
   scale_x_continuous(limits = c(0, max(BEWR_dat$Adult)), expand = c(0, 0)) + # move the y-axis so it intercepts with 0 on x-axis
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
-        axis.text = element_text(size=10, family="Arial"), plot.title = element_text(size = 14, hjust = 0.5, family = "Arial"))
-typeIIIplot 
+        axis.text = element_text(size=11, family="Arial"), 
+        plot.title = element_text(size = 14, hjust = 0.5, family = "Arial"))
+type3plot 
 
 #########################################################################
 
 # Combine plots
 
-# with plot annotations (A, B, C)
-typeIplot + typeIIplot + typeIIIplot + 
-  plot_annotation(tag_levels = "A") &
-  theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
+type1plot + type2plot + type3plot
 
-# or without plot annotations
-typeIplot + typeIIplot + typeIIIplot + 
-  plot_annotation(tag_levels = "A") &
-  theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
 

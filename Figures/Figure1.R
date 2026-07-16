@@ -74,7 +74,7 @@ mapbase <- ggplot(data = na_map, aes(x = long, y = lat, group = group)) +
 
 # add stations to the map
 MAPS_map <- mapbase +
-  layer_spatial(data = STA_sf, color = "#0E3F5C", alpha = 0.5, size = 2.5) +
+  layer_spatial(data = STA_sf, color = "#29335C", alpha = 0.5, size = 2.5) +
   coord_sf(crs="EPSG:4269", xlim=c(-149,-57), ylim=c(27, 69)) +
   xlab("Longitude") + ylab("Latitude") +
   theme(axis.title.x = element_text(size = 12, margin = margin(t=5), family = "Arial"),
@@ -86,7 +86,7 @@ MAPS_map
 #################################################################
 ### Create Panel B of Figure 1: Species curve with extracted response variables ###
 
-# get data for species with a Type II curve
+# get data for species with a Type 2 curve
 # using NOCA
 SPEC_dat <- epred_df_m2 %>%
   filter(SPEC == "NOCA") # specify the species to keep
@@ -106,16 +106,17 @@ slopepoints_jitter <- intensity_curve %>%
   summarize(predictprod =mean(.epred)) %>% 
   mutate(predictprod = predictprod + 0.02) # add a small amount of jitter to move points up above the curve
 
-# create plot of single species with a Type II curve
+# create plot of single species with a Type 2 curve
 # using non-jittered points here. To change that, alter the data for geom_point() to use slopepoints_jitter
-TypeII <- ggplot() +
+
+Type2 <- ggplot() +
   ggdist::stat_lineribbon(data = threshold_curve, aes(x = Adult, y = .epred, color=group)) + 
-  scale_fill_manual(values = colorspace::lighten("#8B7EBB", c(0.95, 0.75, 0.5))) + # change color of threshold error bars here
+  scale_fill_manual(values = c("#EDECF9", "#D8D4EC", "#BFBADD")) + # change color of threshold error bars here
   guides(fill = "none", color="none") +
   ggnewscale::new_scale_fill() +
   ggdist::stat_lineribbon(data = intensity_curve, aes(x = Adult, y = .epred, color = group)) +
-  scale_fill_manual(values = colorspace::lighten("#3F8489", c(0.95, 0.75, 0.5))) + # change color of intensity error bars here
-  scale_color_manual(values=c("#8B7EBB","#3F8489")) + # change color of curve lines here
+  scale_fill_manual(values = c("#D1FBD4", "#AFE4C4", "#72B4A6")) +
+  scale_color_manual(values=c("#715DAA","#2A6D7A")) + # change color of curve lines here
   guides(fill = "none", color = "none") +
   labs(x = "Adult Abundance", y = "Productivity") +
   theme_classic() +
@@ -126,41 +127,31 @@ TypeII <- ggplot() +
   geom_point(data = slopepoints, aes(x=Adult, y=predictprod), size=2.5, color="#0E3F5C") + # add points and set their size, shape, color
   xlim(0, 35) # set limits for the x-axis
 
+Type2
 
-TypeII
 # note: will likely give a warning message about missing values because we are trimming the x-axis so some data is not being plotted
-
-# COLOR CODES FOR ANNOTATING PLOT
-# Jordan: I used the DarkMint palette to plot Intensity and the Purples palette for Threshold in Fig 3
-# these palettes are from the colorspace package
-# So you can match with Fig 3, I have plotted the palettes and identified which hex code I used in the histograms
-# but any of the hex codes in the palettes should look good
-hcl_palettes(palette="DarkMint", n=9, plot=T) # look at palette used above for Intensity
-sequential_hcl(9, "DarkMint") # get hex codes
-# Intensity: I used "#3F8489" to fill the histogram and "#0E3F5C" to outline the histogram bars
-
-hcl_palettes(palette="Purples", n=9, plot=T) # look at palette used above for Threshold
-sequential_hcl(9, "Purples") # get hex codes
-# Threshold: I used "#8B7EBB" to fill the histogram and "#3D1778" to outline the histogram bars
 
 #################################################################
 ### Add annotations for Panel B of Figure 1 ###
 
 # add lines for threshold + intensity, labels
-TypeII <- TypeII + annotate("segment", x= 5, xend = 5, y = 0.7, yend = 0.0, colour = "#583A99", linewidth = 1.2, linetype = 2) + annotate("segment", x = 0, xend = 35, y = 0.7, yend = 0.7, linewidth = 1.2, color = "#0E3F5C", linetype = 7, arrow = arrow(angle = 30, length = unit(0.25, "inches"), ends = "both", type = "open")) + annotate("label", label = "Sampling range for negative feedback intensity", x = 18, xend = 28, y = 0.65, yend = 0.65, colour = "#0E3F5C", size = 4, label.padding = unit(0.5, "lines")) + annotate("label", label = "Negative feedback threshold", x =5, xend = 9, y = 0.3, yend = 0.5, colour = "#583A99", size = 4, label.padding = unit(0.5, "lines"))
-TypeII
+Type2 <- Type2 + annotate("segment", x= 5, xend = 5, y = 0.7, yend = 0, colour = "#583A99", linewidth = 1.2, linetype = 2) + 
+  annotate("segment", x = 5, xend = 35, y = 0.7, yend = 0.7, linewidth = 1.2, color = "#0E3F5C", linetype = 7, arrow = arrow(angle = 30, length = unit(0.25, "inches"), ends = "both", type = "open")) + 
+  annotate("label", label = "Sampling range for negative feedback intensity", x = 20, xend = 30, y = 0.65, yend = 0.65, colour = "#0E3F5C", size = 4, label.padding = unit(0.5, "lines")) + 
+  annotate("label", label = "Negative feedback \n threshold", x =5, xend = 9, y = 0.2, yend = 0.4, colour = "#583A99", size = 4, label.padding = unit(0.5, "lines"))
+Type2
 
 #################################################################
 ### Combine Panels ###
 
-Fig1 <- MAPS_map + TypeII + 
+Fig1 <- MAPS_map / Type2 + 
   plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
 
 Fig1
 
 # export plot
-#ggsave(here("Figures", "Figure1.pdf"), plot = Fig1, 
+ggsave(here("Figures", "Figure1.pdf"), plot = Fig1, 
        width = 30 , height = 15, units = "cm",
        device = cairo_pdf)
 
