@@ -30,6 +30,9 @@ DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
 
 ave_negative_slope_m2 <- readRDS(here("Outputs", "AverageNegativeSlopebySpecies_m2.rds"))
 
+# import list of species with names and classifications of curve type and the MAPS stations for each species
+SppNames_STA <- readRDS(here("Outputs", "SppNames_STA.rds"))
+
 # import bird list used by MAPS to convert 4-letter bird codes to scientific names
 birdcodes <- read.csv(here("Data", "IBP-AOS-LIST23.csv"), header=T) 
 head(birdcodes)  
@@ -102,24 +105,25 @@ DDspp_allnames <- bind_rows(DDspp_names, BUOR_name)
 length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species2_eBird)) 
 length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species3_BirdTree))
 
+# add curve type for each species
+DDspp_curve <- SppNames_STA %>% select(SPEC, Curve_Type) %>% distinct() %>%
+  left_join(DDspp_allnames, .)
+
 # add family information to bird species list using eBird taxonomy
 DDspp_tax <- ebird_tax %>% 
   rename(Species2_eBird = SCI_NAME) %>% # use Species2_eBird for joining data as these are using eBird names
   select(Species2_eBird, FAMILY) %>%
-  left_join(DDspp_allnames, .) %>%
+  left_join(DDspp_curve, .) %>%
   mutate(Family = word(FAMILY, 1), # only keep first word in FAMILY columnn (scientific family name)
          Sci_Name = Species3_BirdTree,
          Spp_Name= str_replace(Sci_Name, " ", "_")) %>%
-  select(SPEC, COMMONNAME, Family, Sci_Name, Spp_Name)
+  select(SPEC, COMMONNAME, Family, Sci_Name, Spp_Name, Curve_Type)
 
-# prep a list of species and their families to be joined to phylogeny
+
+# prep a list of species, their families, and curve types to be joined to phylogeny
 families <- DDspp_tax %>% 
-  select(Spp_Name, Family) %>%
-  rename(label=Spp_Name, family = Family)
-
-# how many species per family?
-spp_family <- families %>% group_by(family) %>% count()
-print(spp_family, n=Inf)
+  select(Spp_Name, Family, Curve_Type) %>%
+  rename(label = Spp_Name, family = Family, curve = Curve_Type)
 
 # get vector of scientific names to prune the phylogeny
 sppnames <- families %>% pull(label)
@@ -139,16 +143,23 @@ new_tree <- as.phylo(phy_join)
 # create a list of family names that are associated with each tree tip label (species name) 
 family_info <- split(phy_join$label, phy_join$family)
 
+# create a list of family names that are associated with each tree tip label (species name) 
+curve_info <- split(phy_join$label, phy_join$curve)
+
 # update the tree with the family as the grouping info using list created in previous step
 family_tree <- groupOTU(new_tree, family_info, group_name="Family") 
-# this will allow us to color branches of tree based on family
+# this will allow us to label sections of the tree based on family
+
+# update the tree with the curve as the grouping info using list created in previous step
+curvefamily_tree <- groupOTU(family_tree, curve_info, group_name="Curve")
+# this will allow us to label tippoints using curve type
 
 # join the species density dependence measures with the bird scientific names 
 DDspp_dat <- left_join(DDspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
   column_to_rownames(., var="Spp_Name")
 
 # link data to phylogenetic tree
-tree_dat <- treedata(family_tree, DDspp_dat, sort=T)
+tree_dat <- treedata(curvefamily_tree, DDspp_dat, sort=T)
 
 phytree <-tree_dat$phy # get phylo tree for plotting
 
@@ -165,13 +176,8 @@ palette18 <- createPalette(18, c("#00ffff", "#ff00ff", "#ffff00"), M=5000)
 swatch(palette18) # view the palette
 palette18_hex <- as.character(palette18) # save hex codes for colors in a vector of characters
 
-# alternatively: use one of the palettes included within Polychrome package
-my_palette <- palette36.colors(18)
-swatch(my_palette)
-mypalette_hex <- as.character(my_palette)
 
 # plot circular phylogeny with Family labels
-
 # we need to see nodes on the tree to figure out where to apply family labels
 ggtree::ggtree(phytree_name, layout="circular") +
     geom_tippoint(aes(color=Family), size=2, shape=19) +
@@ -188,31 +194,23 @@ dt <- data.frame(node =c(123, 65, 70, 74, 84, 87, 92, 95, 102, 109),
                            0.5, 0.6, 0.7, 0.8, 0.2))
 
 
+# now plot curve type as the tippoint and add family labels using dt 
 (circ <- ggtree::ggtree(phytree_name, layout="circular") +
-    geom_tippoint(aes(color=Family), size=2, shape=19) +
-    scale_color_manual(values = palette18_hex) +
+    geom_tippoint(aes(color=Curve), size=2.5, shape=19) +
+    scale_color_manual(values = c("#DA4167", "#29335C", "#F5AF00")) + # CHANGE COLORS
     geom_cladelab(data = dt, 
                   mapping=aes(node=node, label=familyname, vjust=vjust, hjust=hjust), offset = 30, offset.text = 30, fontsize=4.5) +
     guides(color = guide_legend( # to style this legend individually to have different settings that Intensity and Threshold legends, use guides()
-    title = "Family",
-    position ="bottom",
+    title = "Curve Type",
+    position ="right",
     theme(legend.title.position = "top", # put legend title at top
-          legend.title = element_text(size=12, hjust=0.5), # change text for legend title
-          legend.key.spacing.x = unit(5, "pt"), 
-          legend.key.spacing.y = unit(1, "pt"),
-          legend.text = element_text(margin=margin(r=2), size=11)
+          legend.title = element_text(size=12, margin=margin(b=8)), # change text for legend title
+          legend.text = element_text(size=11),
+          legend.key.size = unit(0.4, "cm")
           )))
 )
           
-          
-# create a version without tipppoints
-(circ_b <- ggtree::ggtree(phytree_name, layout="circular") +
-    scale_color_manual(values = palette18_hex) +
-    geom_cladelab(data = dt, 
-                  mapping=aes(node=node, label=familyname, vjust=vjust, hjust=hjust), offset = 30, offset.text = 25, fontsize=4.5)
-)
 
-  
 # get data for threshold and intensity
 # this needs to have species names formatted without the underscore to match the updated labels for tree tips
 
@@ -234,39 +232,26 @@ threshold_dat <- left_join(DDspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
 # to format the legends associated with each step, we need to put the guide arguments/details inside of scale_fill() otherwise we get an error message
 
 # first add values for threshold
+
+
 (thresholdplot <- gheatmap(circ, threshold_dat, offset=-2, width=.15, colnames =F) +
-  scale_fill_continuous_sequential(palette = "Purples", name="Threshold", na.value="white", 
-                                   guide= guide_colorbar(title = "Threshold",
-                                                         title.theme = element_text(size=12, margin=margin(b=10)),
-                                                         label.theme = element_text(size=11))))
+    scale_fill_continuous_sequential(palette = "Purples", name="Threshold", na.value="white", 
+                                     guide= guide_colorbar(title = "Threshold", 
+                                                           theme = theme(
+                                                           legend.title = element_text(size=12, margin=margin(b=8)),
+                                                           legend.text = element_text(size=11),
+                                                           legend.key.size = unit(0.4, "cm")))))
                                                          
 part1 <- thresholdplot + ggnewscale::new_scale_fill()
 
 # now add values for intensity
 (threshold_intensity_plot <- gheatmap(part1, intensity_dat, offset=10, width=.15, colnames = F) +
-    scale_fill_continuous_sequential(palette = "DarkMint", name="Intensity", na.value="white", 
+    scale_fill_continuous_sequential(palette = "DarkMint", name="Intensity", na.value="white", breaks = c(0.025, 0.075, 0.125),
     guide = guide_colorbar(title = "Intensity",
-                          title.theme = element_text(size=12, margin=margin(b=10)),
-                          label.theme = element_text(size=11))))
+                           theme = theme(legend.title = element_text(size=12, margin=margin(b=8)),
+                                         legend.text = element_text(size=11),
+                                         legend.key.size = unit(0.4, "cm")))))
                                                      
-
-# NO TIPPPOINTS
-# first add values for threshold
-(thresholdplot_b <- gheatmap(circ_b, threshold_dat, offset=-2, width=.15, colnames =F) +
-    scale_fill_continuous_sequential(palette = "Purples", name="Threshold", na.value="white", 
-                                     guide= guide_colorbar(title = "Threshold",
-                                                           title.theme = element_text(size=12, margin=margin(b=10)),
-                                                           label.theme = element_text(size=11))))
-
-part1_b <- thresholdplot_b + ggnewscale::new_scale_fill()
-
-# now add values for intensity
-(threshold_intensity_plot_b <- gheatmap(part1_b, intensity_dat, offset=10, width=.15, colnames = F) +
-    scale_fill_continuous_sequential(palette = "DarkMint", name="Intensity", na.value="white", 
-                                     guide = guide_colorbar(title = "Intensity",
-                                                            title.theme = element_text(size=12, margin=margin(b=10)),
-                                                            label.theme = element_text(size=11))) +
-    theme(plot.margin = margin(t = -1, r = -3, b = -2, l = -3, "cm")))
 
 #########################################################################
 
@@ -292,7 +277,7 @@ vars <- threshold_dat %>%
 (scatter <- ggplot(vars, aes(x=intensity, y=threshold)) +
   geom_point(size=2, color = "#484554") +
   theme_classic() +
-  labs(x="Threshold", y="Intensity") +
+  labs(x="Intensity", y="Threshold") +
   xlim(0, 0.15) + ylim(0,20) +
   theme(legend.position="none",
         axis.title = element_text(size=14),
@@ -302,10 +287,10 @@ vars <- threshold_dat %>%
 # add histograms to sides of scatterplot with ggMarginal from ggExtra package
 (panelA <- ggMarginal(scatter, type = "histogram",
            size = 2, # size of center scatterplot relative to histograms
-           xparams = list(fill = "#8B7EBB", # set specific parameters for threshold histogram
+           yparams = list(fill = "#8B7EBB", # set specific parameters for threshold histogram
                           col="#3D1778", # col is outline for histogram bars
-                          bins=30), # number of bins in the histogram
-           yparams = list(fill = "#3F8489",  # set specific parameters for intensity histogram
+                          bins=25), # number of bins in the histogram
+           xparams = list(fill = "#3F8489",  # set specific parameters for intensity histogram
                           col= "#0E3F5C", 
                           bins=25))) 
 
@@ -314,8 +299,8 @@ vars <- threshold_dat %>%
 ### Combine Figure Panels & Save ###
 
 wrap_elements(plot_spacer() + panelA + plot_spacer() + plot_layout(widths=c(0.05, 0.6, 0.05))) / 
-  wrap_elements(threshold_intensity_plot_b) +
-  plot_layout(heights=c(5,7)) & plot_annotation(tag_levels = "A") &
+  wrap_elements(threshold_intensity_plot) +
+  plot_layout(heights=c(6,9)) & plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
 
 

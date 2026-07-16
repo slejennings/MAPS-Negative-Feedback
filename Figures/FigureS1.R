@@ -64,14 +64,14 @@ plotinfo <- SppNames_STA %>%
 
 # add identifiers to random effects plot data
 RE_m2_plotdat <- left_join(RE_m2_df, plotinfo) %>%
-  select(SPEC, STA, Adult, estimate__, COMMONNAME, Curve_type)
+  select(SPEC, STA, Adult, estimate__, COMMONNAME, Curve_Type)
 
 # import data from previous step for plotting species-level conditional effects
 FE_m2_plotdf <- readRDS(here("Outputs", "epred_df_m2.rds"))
 
 # add some identifying info (common name for species, classification for shape of curve)
 FE_m2_plotdat <- left_join(FE_m2_plotdf, plotinfo) %>%
-  select(SPEC, COMMONNAME, Curve_type, Adult, .epred)
+  select(SPEC, COMMONNAME, Curve_Type, Adult, .epred)
 
 # plot data for the abundance-productivity relationship for each species and the station-level random effects
 plots_bothRE_FE <- 

@@ -405,11 +405,10 @@ lambda_threshold <- fitContinuous(et$phy, DDspp_dat[8], model = "lambda")
 lambda_threshold 
 
 ## Is there phylogenetic signal in the average slope (intensity)?
-lambda_slope <- fitContinuous(et$phy, DDspp_dat[12], model = "lambda")
-lambda_slope
 # with standard error of the intensity value included
 lambda_slope <- fitContinuous(et$phy, DDspp_dat[12], SE=DDspp_dat[15], model = "lambda")
-lambda_slope # appears to be the same... did this work?
+lambda_slope
 
 ## Is there phylogenetic signal in the curve type classification?
-lambda_curve <- fitDiscrete(et$phy, DDspp_dat[3], model = "") # WHAT IS THE MODEL HERE? DO WE ALSO NEED TO USE TRANSFORM?
+lambda_curve <- fitDiscrete(et$phy, DDspp_dat[3], model = "ER", transform ="lambda")
+lambda_curve

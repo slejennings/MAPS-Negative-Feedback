@@ -46,8 +46,8 @@ BEWR_dat <- epred_df_m2 %>%
 
 # note: if you change the species, you'll need edit ggplot(data =) and scale_x_continuous(limits =)
 typeIplot <- ggplot(data = BCCH_dat, aes(x = Adult, y = .epred)) + 
-  ggdist::stat_lineribbon(color = "#399AC2") + # change color here
-  scale_fill_manual(values = colorspace::lighten("#399AC2", c(0.95, 0.75, 0.5))) + # change color here
+  ggdist::stat_lineribbon(color = "#DA4167") + # change color here
+  scale_fill_manual(values = colorspace::lighten("#DA4167", c(0.95, 0.75, 0.5))) + # change color here
   guides(fill = "none") +
   labs(x = "Adult Abundance", y = "Productivity", title = "Type 1") +
   theme_classic() +
@@ -61,9 +61,11 @@ typeIplot
 # we probably want to add a title or text annotation to this plot that says "Type I"
 # also, it could be useful to differentiate the types using colors
 
+
+
 typeIIplot <- ggplot(data = KEWA_dat, aes(x = Adult, y = .epred)) + 
-  ggdist::stat_lineribbon(color = "#F17B51") + # change color here
-  scale_fill_manual(values = colorspace::lighten("#F17B51", c(0.95, 0.75, 0.5))) + # change color here
+  ggdist::stat_lineribbon(color = "#29335C") + # change color here
+  scale_fill_manual(values = colorspace::lighten("#29335C", c(0.95, 0.75, 0.5))) + # change color here
   guides(fill = "none") +
   labs(x = "Adult Abundance", y = "Productivity", title = "Type 2") +
   theme_classic() +
@@ -74,8 +76,8 @@ typeIIplot <- ggplot(data = KEWA_dat, aes(x = Adult, y = .epred)) +
 typeIIplot 
 
 typeIIIplot <- ggplot(data = BEWR_dat, aes(x = Adult, y = .epred)) + 
-  ggdist::stat_lineribbon(color = "#9BB306") + 
-  scale_fill_manual(values = colorspace::lighten("#9BB306", c(0.95, 0.75, 0.5))) + # change color here
+  ggdist::stat_lineribbon(color = "#F5AF00") + 
+  scale_fill_manual(values = colorspace::lighten("#F5AF00", c(0.95, 0.75, 0.5))) + # change color here
   guides(fill = "none") +
   labs(x = "Adult Abundance", y = "Productivity", title = "Type 3") +
   theme_classic() +
@@ -98,3 +100,4 @@ typeIplot + typeIIplot + typeIIIplot +
 typeIplot + typeIIplot + typeIIIplot + 
   plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
+

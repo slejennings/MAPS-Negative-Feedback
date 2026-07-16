@@ -118,7 +118,7 @@ dat_LH <- dat_LH |>
 ##################################################################################
 ### Life History Model 1 ###
 
-# Response variable: number of adults at onset of DD effects (min_adult) 
+# Response variable: threshold (min_adult) 
 # Explanatory variables: longevity, clutch size, adult survival
 # Using negative binomial distribution for model
 
@@ -189,103 +189,11 @@ plot(conditional_effects(minadult_LH_mod_nb, effects="scAdult.survival"), points
 plot(conditional_effects(minadult_LH_mod_nb, effects="sclitter_or_clutch_size_n"), points = TRUE)
 plot(conditional_effects(minadult_LH_mod_nb, effects="scMaximum.longevity"), points = TRUE) 
 
-### make a fancy plot of adult survival for life history model using minimum adults (threshold) of DD as response variable
-
-# find the min and max values for adult survival in the data
-min(dat_LH$scAdult.survival) # -2.97
-max(dat_LH$scAdult.survival)  # 3.56
-
-# we also need the mean values of the other response variables
-mean(dat_LH$scMaximum.longevity) # 0
-mean(dat_LH$sclitter_or_clutch_size_n) # 0
-
-
-# get predicted values for adult survival
-survival_minadult_epred <- minadult_LH_mod_nb %>% 
-  epred_draws(newdata = tibble(scAdult.survival = seq(-3, 3.6, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scMaximum.longevity = c(0), # fix max longevity at mean
-                               sclitter_or_clutch_size_n = c(0)), re_formula = NA)
-
-# make plot
-(minadult_survival_plot <- ggplot(survival_minadult_epred, aes(x = scAdult.survival, y = .epred)) +
-  stat_lineribbon(color = "#238b45") + 
-  scale_fill_manual(values = colorspace::lighten("#238b45", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Adult Survival", y = "Density Dependence Threshold") +
-  theme_classic() +
-  geom_point(data = dat_LH, aes(x= scAdult.survival, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 30)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
-### make a fancy plot of clutch size for life history model using minimum adults (threshold) of DD as response variable
-
-# find the min and max values for clutch size in the data
-min(dat_LH$sclitter_or_clutch_size_n) # -1.35
-max(dat_LH$sclitter_or_clutch_size_n)  # 3.39
-
-# we also need the mean values of the other response variables
-mean(dat_LH$scMaximum.longevity) # 0
-mean(dat_LH$scAdult.survival) # 0
-
-# get predicted values for clutch size
-clutch_minadult_epred <- minadult_LH_mod_nb %>% 
-  epred_draws(newdata = tibble(sclitter_or_clutch_size_n = seq(-1.4, 3.4, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scMaximum.longevity = c(0), # fix at mean
-                               scAdult.survival = c(0)), re_formula = NA)
-
-# make plot
-(minadult_clutch_plot <-ggplot(clutch_minadult_epred, aes(x = sclitter_or_clutch_size_n, y = .epred)) +
-  stat_lineribbon(color = "#56B4E9") + 
-  scale_fill_manual(values = colorspace::lighten("#56B4E9", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Clutch Size", y = "Density Dependence Threshold") +
-  theme_classic() +
-  geom_point(data = dat_LH, aes(x= sclitter_or_clutch_size_n, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 20)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
-### make a fancy plot of longevity for life history model using minimum adults (threshold) of DD as response variable
-
-# find the min and max values for maximum longevity in the data
-min(dat_LH$scMaximum.longevity) # -1.94
-max(dat_LH$scMaximum.longevity)  # 3.6
-
-# we also need the mean values of the other response variables
-mean(dat_LH$sclitter_or_clutch_size_n) # 0
-mean(dat_LH$scAdult.survival) # 0
-
-# get predicted values for clutch size
-longevity_minadult_epred <- minadult_LH_mod_nb %>% 
-  epred_draws(newdata = tibble(scMaximum.longevity = seq(-2, 3.6, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               sclitter_or_clutch_size_n = c(0), # fix at mean
-                               scAdult.survival = c(0)), re_formula = NA)
-
-# make plot
-(minadult_longevity_plot <- ggplot(longevity_minadult_epred, aes(x = scMaximum.longevity, y = .epred)) +
-  stat_lineribbon(color = "#F7710A") + 
-  scale_fill_manual(values = colorspace::lighten("#F7710A", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Maximum Longevity", y = "Density Dependence Threshold") +
-  theme_classic() +
-  geom_point(data = dat_LH, aes(x= scMaximum.longevity, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 30)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14))) 
-
-
 
 ##################################################################################
 ### Life History Model 2 ###
 
-# Response variable: estimated intensity (slope) of density dependence
+# Response variable: estimated intensity (slope)
 # Explanatory variables: longevity, clutch size, adult survival
 
 
@@ -368,66 +276,6 @@ plot(conditional_effects(slope_LH_mod_logn, effects="scAdult.survival"), points 
 # clutch size
 plot(conditional_effects(slope_LH_mod_logn, effects="sclitter_or_clutch_size_n"), points = TRUE) 
 
-### make a fancy plot of adult survival for life history model using intensity of DD as response variable
-
-# find the min and max values for adult survival in the data
-min(dat_LH$scAdult.survival) # -2.97
-max(dat_LH$scAdult.survival)  # 3.55
-
-# we also need the mean values of the other response variables
-mean(dat_LH$scMaximum.longevity) # 0
-mean(dat_LH$sclitter_or_clutch_size_n) # 0
-
-# get predicted values for adult survival
-survival_slope_epred <- slope_LH_mod_logn %>% 
-  epred_draws(newdata = tibble(scAdult.survival = seq(-3, 3.6, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scMaximum.longevity = c(0), # fix at mean
-                               sclitter_or_clutch_size_n = c(0)), re_formula = NA)
-
-# make plot
-(slope_survival_plot <- ggplot(survival_slope_epred, aes(x = scAdult.survival, y = .epred)) +
-  stat_lineribbon(color = "#238b45") + 
-  scale_fill_manual(values = colorspace::lighten("#238b45", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Adult Survival", y = "Intensity of Density Dependence)") +
-  theme_classic() +
-  geom_point(data = dat_LH, aes(x= scAdult.survival, y = abs(estimate)), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 0.3)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
-### make a fancy plot of clutch size for life history model using slope (intensity) of DD as response variable
-
-# find the min and max values for clutch size in the data
-min(dat_LH$sclitter_or_clutch_size_n) # -1.35
-max(dat_LH$sclitter_or_clutch_size_n)  # 3.4
-
-# we also need the mean values of the other response variables
-mean(dat_LH$scMaximum.longevity) # 0
-mean(dat_LH$scAdult.survival) # 0
-
-# get predicted values for clutch size
-clutch_slope_epred <- slope_LH_mod_logn %>% 
-  epred_draws(newdata = tibble(sclitter_or_clutch_size_n = seq(-1.4, 3.4, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scMaximum.longevity = c(0), # fix at mean
-                               scAdult.survival = c(0)), re_formula = NA)
-
-# make plot
-(slope_clutch_plot <- ggplot(clutch_slope_epred, aes(x = sclitter_or_clutch_size_n, y = .epred)) +
-  stat_lineribbon(color = "#56B4E9") + 
-  scale_fill_manual(values = colorspace::lighten("#56B4E9", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Clutch Size", y = "Intensity of Density Dependence") +
-  theme_classic() +
-  geom_point(data = dat_LH, aes(x= sclitter_or_clutch_size_n, y = abs(estimate)), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 0.3)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
 
 #########################################################################################
 #################### Density Dependence Metrics and Morphometric Traits #################
@@ -466,7 +314,7 @@ dat_morph <- dat_morph |>
 ##################################################################################
 ### Morphometrics Model 1 ###
 
-# Response variable: number of adults at onset of DD effects (min_adult) 
+# Response variable: threshold (min_adult) 
 # Explanatory variables: HWI, body mass, Beak PC1 and PC2
 # Using negative binomial model again
 
@@ -531,41 +379,10 @@ pp_check(minadult_Morph_mod_nb, type="intervals", ndraws = 100)
 # make plot of scBeak_PC2 (weak effect)
 plot(conditional_effects(minadult_Morph_mod_nb, effects="scBeak_PC2"), points = TRUE) 
 
-### make a fancy plot of beak PC2 for morphometric model using threshold (min # of adults) of DD as response variable
-
-# find the min and max values for Beak PC2 in the data
-min(dat_morph$scBeak_PC2) # -2.45
-max(dat_morph$scBeak_PC2)  # 2.32
-
-# we also need the mean values of the other response variables
-mean(dat_morph$scHWI) # 0
-mean(dat_morph$scLNMass) # 0
-mean(dat_morph$scBeak_PC1) # 0
-
-# get predicted values for strata
-DM_minadult_epred <- minadult_Morph_mod_nb %>% 
-  epred_draws(newdata = tibble(scBeak_PC2 = seq(-2.5, 2.4, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scBeak_PC1 = c(0), # fix at mean
-                               scHWI = c(0), 
-                               scLNMass = c(0)), re_formula = NA)
-
-# make plot
-(minadult_beakPC2_plot <- ggplot(DM_minadult_epred, aes(x = scBeak_PC2, y = .epred)) +
-  stat_lineribbon(color = "#bf0404") + 
-  scale_fill_manual(values = colorspace::lighten("#bf0404", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Beak Shape (relative to size)", y = "Density Dependence Threshold") +
-  theme_classic() +
-  geom_point(data = dat_morph, aes(x= scBeak_PC2, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 20)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
 
 ##################################################################################
 ### Morphometric Model 2 ###
-# Response variable: estimated intensity (slope) of density dependence
+# Response variable: estimated intensity (slope)
 # Explanatory variables: HWI, body mass, Beak PC1 and PC2
 
 # using lognormal model after taking the absolute value of the intensity (slope)
@@ -670,7 +487,7 @@ dat_trophic <- dat_trophic |>
 ##################################################################################
 #### Trophic Model 1 #### 
 
-# Response variable: adults at onset of DD effects (min_adult) 
+# Response variable: threshold (min_adult) 
 # Explanatory variables:  trophic level, diet generalism and foraging strata generalism
 # Using negative binomial model
 
@@ -738,40 +555,10 @@ pp_check(minadult_Trophic_mod_nb, type="intervals", ndraws = 100)
 plot(conditional_effects(minadult_Trophic_mod_nb, effects="scTrophicLevel"), points = TRUE) 
 
 
-### make a fancy plot of trophic level for trophic model using minimum adults (threshold) of DD as response variable
-
-# find the min and max values for trophic level in the data
-min(dat_trophic$scTrophicLevel) # -2.3
-max(dat_trophic$scTrophicLevel)  # 1.37
-
-# we also need the mean values of the other response variables
-mean(dat_trophic$scStrata) # 0
-mean(dat_trophic$scDiet) # 0
-
-# get predicted values for trophic level
-trophiclevel_minadult_epred <- minadult_Trophic_mod_nb %>% 
-  epred_draws(newdata = tibble(scTrophicLevel = seq(-2.3, 1.4, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scStrata = c(0), # fix at mean
-                               scDiet = c(0)), re_formula = NA)
-
-# make plot
-(minadult_trophic_plot <- ggplot(trophiclevel_minadult_epred, aes(x = scTrophicLevel, y = .epred)) +
-  stat_lineribbon(color = "#6518B8") + 
-  scale_fill_manual(values = colorspace::lighten("#6518B8", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Trophic Level", y = "Density Dependence Threshold") +
-  theme_classic() +
-  geom_point(data = dat_trophic, aes(x= scTrophicLevel, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 20)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
 ##################################################################################
 ### Trophic Model 2 ###
 
-# Response variable: estimated intensity (slope) of density dependence
+# Response variable: estimated intensity (slope)
 # Explanatory variables: trophic level, diet generalism and foraging strata generalism
 # Using lognormal model
 
@@ -842,37 +629,6 @@ pp_check(slope_Trophic_mod_logn, type="intervals", ndraws = 100)
 plot(conditional_effects(slope_Trophic_mod_logn, effects="scStrata"), points = TRUE) 
 
 
-### make a fancy plot of strata for trophic model using slope (intensity) of DD as response variable
-
-# find the min and max values for strata in the data
-min(dat_trophic$scStrata) # -1.82
-max(dat_trophic$scStrata)  # 2.41
-
-# we also need the mean values of the other response variables
-mean(dat_trophic$scTrophicLevel) # 0
-mean(dat_trophic$scDiet) # 0
-
-# get predicted values for Strata
-strata_slope_epred <- slope_Trophic_mod_logn %>% 
-  epred_draws(newdata = tibble(scStrata = seq(-1.9, 2.5, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scTrophicLevel = c(0), # fix at mean
-                               scDiet = c(0)), re_formula = NA)
-
-# make plot
-(slope_strata_plot <- ggplot(strata_slope_epred, aes(x = scStrata, y = .epred)) +
-    stat_lineribbon(color = "#AF088F") + 
-    scale_fill_manual(values = colorspace::lighten("#AF088F", c(0.95, 0.75, 0.5))) + 
-    guides(fill = "none") +
-    labs(x = "Scaled Trophic Strata", y = "Intensity of Density Dependence") +
-    theme_classic() +
-    geom_point(data = dat_trophic, aes(x= scStrata, y = abs(estimate)), pch = 19, color = "gray30") +
-    coord_cartesian(ylim=c(0, 0.2)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-    theme(axis.text.x = element_text(size=12), 
-          axis.text.y = element_text(size=12), 
-          axis.title.x = element_text(size=14), 
-          axis.title.y = element_text(size=14)))
-
-
 #########################################################################################
 ########### Density Dependence Metrics and Sexual Selection Traits ######################
 #########################################################################################
@@ -914,7 +670,7 @@ dat_ss <- dat_ss %>%
 ##################################################################################
 ### Sexual Selection Model 1 ### 
 
-# Response variable: number of adults at onset of DD effects (min_adult)
+# Response variable: threshold (min_adult)
 # Explanatory variables: Plumage_DC, Wing_DM and Mating system
 # Using negative binomial model
 
@@ -983,42 +739,10 @@ pp_check(minadult_SS_mod_nb, type="intervals", ndraws = 100)
 plot(conditional_effects(minadult_SS_mod_nb, effects="scDC"), points = TRUE) 
 
 
-### make a fancy plot of dichromatism for sexual selection model using minimum adults (threshold) of DD as response variable
-
-# find the min and max values for sexual dichromatism in the data
-min(dat_ss$scDC) # -1.4
-max(dat_ss$scDC)  # 2.62
-
-# we also need the mean values of the other response variables
-mean(dat_ss$scDM) # 0
-mean(dat_ss$sc_ssM) # 0
-mean(dat_ss$sc_ssF) # 0
-
-# get predicted values for strata
-DC_minadult_epred <- minadult_SS_mod_nb %>% 
-  epred_draws(newdata = tibble(scDC = seq(-1.4, 2.7, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scDM = c(0), # fix at mean
-                               sc_ssM = c(0), 
-                               sc_ssF = c(0)), re_formula = NA)
-
-# make plot
-(minadult_DC_plot <- ggplot(DC_minadult_epred, aes(x = scDC, y = .epred)) +
-  stat_lineribbon(color = "#0A9AA8") + 
-  scale_fill_manual(values = colorspace::lighten("#0A9AA8", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Sexual Dichromatism", y = "Density Dependence Threshold") +
-  theme_classic() +
-  geom_point(data = dat_ss, aes(x= scDC, y = min_adult), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 20)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
 ##################################################################################
 ### Sexual Selection Model 2 ###
 
-# Response variable: estimated intensity (slope) of density dependence
+# Response variable: estimated intensity (slope)
 # Explanatory variables: Plumage_DC, Wing_DM and Mating system
 # Using lognormal model
 
@@ -1090,70 +814,6 @@ pp_check(slope_SS_mod_logn, type="intervals", ndraws = 100)
 # plots for ssM and DC
 plot(conditional_effects(slope_SS_mod_logn, effects="scDC"), points = TRUE) 
 plot(conditional_effects(slope_SS_mod_logn, effects="sc_ssM"), points = TRUE)
-
-### make a fancy plot of dichromatism for sexual selection model using intensity (slope) of DD as response variable
-
-# find the min and max values for sexual dichromatism in the data
-min(dat_ss$scDC) # -1.4
-max(dat_ss$scDC)  # 2.62
-
-# we also need the mean values of the other response variables
-mean(dat_ss$scDM) # 0
-mean(dat_ss$sc_ssM) # 0
-mean(dat_ss$sc_ssF) # 0
-
-# get predicted values for strata
-DC_slope_epred <- slope_SS_mod_logn %>% 
-  epred_draws(newdata = tibble(scDC = seq(-1.4, 2.7, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scDM = c(0), # fix at mean
-                               sc_ssM = c(0), 
-                               sc_ssF = c(0)), re_formula = NA)
-
-# make plot
-(slope_DC_plot <- ggplot(DC_slope_epred, aes(x = scDC, y = .epred)) +
-  stat_lineribbon(color = "#0A9AA8") + 
-  scale_fill_manual(values = colorspace::lighten("#0A9AA8", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Sexual Dichromatism", y = "Intensity of Density Dependence") +
-  theme_classic() +
-  geom_point(data = dat_ss, aes(x= scDC, y = abs(estimate)), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 0.1)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
-
-### make a fancy plot of male sexual selection using intensity (slope) of DD as response variable
-
-# find the min and max values for male sexual selection in the data
-min(dat_ss$sc_ssM) # -0.84
-max(dat_ss$sc_ssM)  # 2.77
-
-# we also need the mean values of the other response variables
-mean(dat_ss$scDC) # 0
-mean(dat_ss$scDM) # 0
-mean(dat_ss$sc_ssF) # 0
-
-# get predicted values for strata
-ssM_slope_epred <- slope_SS_mod_logn %>% 
-  epred_draws(newdata = tibble(sc_ssM = seq(-0.9, 2.8, 0.1), # create a sequence from the min to the max using intervals of 0.1
-                               scDC = c(0), # fix at mean
-                               scDM = c(0), 
-                               sc_ssF = c(0)), re_formula = NA)
-
-# make plot
-(slope_ssM_plot <- ggplot(ssM_slope_epred, aes(x = sc_ssM, y = .epred)) +
-  stat_lineribbon(color = "#6E940F") + 
-  scale_fill_manual(values = colorspace::lighten("#6E940F", c(0.95, 0.75, 0.5))) + 
-  guides(fill = "none") +
-  labs(x = "Scaled Male Sexual Selection", y = "Intensity of Density Dependence") +
-  theme_classic() +
-  geom_point(data = dat_ss, aes(x= sc_ssM, y = abs(estimate)), pch = 19, color = "gray30") +
-  coord_cartesian(ylim=c(0, 0.1)) + # ADDING LIMITS to Y-AXIS TO ZOOM IN 
-  theme(axis.text.x = element_text(size=12), 
-        axis.text.y = element_text(size=12), 
-        axis.title.x = element_text(size=14), 
-        axis.title.y = element_text(size=14)))
 
 
 ##########################################################################
@@ -1278,3 +938,9 @@ saveRDS(slope_Trophic_mod_logn, here("Models/TraitModels", "slope_Trophic_mod_lo
 saveRDS(minadult_Trophic_mod_nb, here("Models/TraitModels", "minadult_Trophic_mod_nb.rds"))
 saveRDS(slope_SS_mod_logn, here("Models/TraitModels", "slope_SS_mod_logn.rds"))
 saveRDS(minadult_SS_mod_nb, here("Models/TraitModels", "minadult_SS_mod_nb.rds"))
+
+# save data used in models (for plotting)
+saveRDS(dat_LH, here("Outputs", "dat_LH.rds"))
+saveRDS(dat_trophic, here("Outputs", "dat_trophic.rds"))
+saveRDS(dat_morph, here("Outputs", "dat_morph.rds"))
+saveRDS(dat_ss, here("Outputs", "dat_ss.rds"))

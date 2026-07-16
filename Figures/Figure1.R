@@ -61,29 +61,21 @@ STAlist_coords <- left_join(STAlist, station_info, by = "STA") %>%
 # one stations is missing coordinates
 
 # make the station locations with their data into spatial points and set CRS as NAD83
-STA_sf <- st_as_sf(STAlist_coords, coords = c(2:3), crs="+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs +towgs84=0,0,0")
+STA_sf <- st_as_sf(STAlist_coords, coords = c(2:3), crs="EPSG:4269")
 
-# get map of USA and Canada from rnaturalearth package
-USACanada_map <- ne_countries(
-  country = c("Canada", "United States of America"), 
-  returnclass = "sf"
-)
+# get map of the world and subset USA and Canada
+world_map <- map_data("world")
+na_map <- subset(world_map, region %in% c("USA", "Canada"))
 
-mapcrs <- crs(USACanada_map) # save crs of the map layer
+# plot map layer
+mapbase <- ggplot(data = na_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill = "white", color = "black") +
+  theme_minimal()
 
-# plot the map layer
-(mapplot <- ggplot(data = USACanada_map) +
-    geom_sf(fill = "white", color = "black") +
-    theme_minimal())
-
-
-# convert station coordinates to use same crs as map layer
-STA_sf_plot <- st_transform(STA_sf, crs = mapcrs)
-
-
-# add stations points to the USA map 
-MAPS_map <- mapplot + 
-  layer_spatial(data = STA_sf_plot, color = "#484554", alpha = 0.5) +
+# add stations to the map
+MAPS_map <- mapbase +
+  layer_spatial(data = STA_sf, color = "#0E3F5C", alpha = 0.5, size = 2.5) +
+  coord_sf(crs="EPSG:4269", xlim=c(-149,-57), ylim=c(27, 69)) +
   xlab("Longitude") + ylab("Latitude") +
   theme(axis.title.x = element_text(size = 12, margin = margin(t=5), family = "Arial"),
         axis.title.y = element_text(size = 12, margin = margin(r=5), family = "Arial"),
@@ -168,7 +160,7 @@ Fig1 <- MAPS_map + TypeII +
 Fig1
 
 # export plot
-ggsave(here("Figures", "Figure1.pdf"), plot = Fig1, 
+#ggsave(here("Figures", "Figure1.pdf"), plot = Fig1, 
        width = 30 , height = 15, units = "cm",
        device = cairo_pdf)
 
