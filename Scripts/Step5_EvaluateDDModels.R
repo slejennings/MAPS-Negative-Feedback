@@ -330,11 +330,15 @@ colnames(nameconvert)
 # import phylogenetic tree
 tree_out <- read.tree(here("Data", "Jetz_ConsensusPhy.tre"))
 
-# get a list of the 62 species with number of data points for each
+# import curve type classifications
+curvetype <- readRDS(here("Outputs", "SppNames_STA.rds")) %>% select(SPEC, Curve_Type) %>% distinct()
+
+# get a list of the 62 species with number of data points for each and join with curve type
 DD_SPEC <- DD_breed_dat %>%
   group_by(SPEC) %>% # group the data by species
   summarize(n = n()) %>% # get the number of data points for each species
-  arrange(desc(n)) # arrange is descending order
+  arrange(desc(n)) %>% # arrange is descending order
+  left_join(., curvetype)
 
 # combine names with species codes
 names <- DD_SPEC %>% 
@@ -345,7 +349,7 @@ nrow(names) # check all species are present. Should equal 62
 
 # check all 4 letter codes were paired with a name. Check there are no duplicate names
 check <- names %>% 
-  dplyr::select(SPEC, COMMONNAME, SCINAME) %>% 
+  dplyr::select(SPEC, COMMONNAME, SCINAME, Curve_Type) %>% 
   distinct() # keep only unique rows
 print(check, n=Inf) # print all the rows
 
@@ -385,6 +389,8 @@ length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames
 # Join the species density dependence measures and the bird scientific names 
 DDspp_dat <- left_join(DDspp_allnames, ave_negative_slope_m2, by = "SPEC") %>%
   mutate(Species3_BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # replace blanks in Genus species with underscore
+  rowwise() %>%
+  mutate(intensity_error = ((conf.high-conf.low) / (2 * 1.96))) %>% # calculate an estimate of SE associated with intensity
   column_to_rownames(., var="Species3_BirdTree")
 
 head(DDspp_dat)
@@ -395,11 +401,15 @@ et <- treedata(tree_out, DDspp_dat, sort=T)
 
 # Is there phylogenetic signal in the minimum adults to trigger density dependence (threshold)?
 # using lambda as a measure of phylogenetic signal
-lambda_threshold <- fitContinuous(et$phy, DDspp_dat[7], model = "lambda")
+lambda_threshold <- fitContinuous(et$phy, DDspp_dat[8], model = "lambda")
 lambda_threshold 
 
-
 ## Is there phylogenetic signal in the average slope (intensity)?
-lambda_slope <- fitContinuous(et$phy, DDspp_dat[11], model = "lambda")
+lambda_slope <- fitContinuous(et$phy, DDspp_dat[12], model = "lambda")
 lambda_slope
+# with standard error of the intensity value included
+lambda_slope <- fitContinuous(et$phy, DDspp_dat[12], SE=DDspp_dat[15], model = "lambda")
+lambda_slope # appears to be the same... did this work?
 
+## Is there phylogenetic signal in the curve type classification?
+lambda_curve <- fitDiscrete(et$phy, DDspp_dat[3], model = "") # WHAT IS THE MODEL HERE? DO WE ALSO NEED TO USE TRANSFORM?
