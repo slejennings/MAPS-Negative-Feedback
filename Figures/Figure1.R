@@ -138,9 +138,6 @@ TypeII <- ggplot() +
 TypeII
 # note: will likely give a warning message about missing values because we are trimming the x-axis so some data is not being plotted
 
-
-
-
 # COLOR CODES FOR ANNOTATING PLOT
 # Jordan: I used the DarkMint palette to plot Intensity and the Purples palette for Threshold in Fig 3
 # these palettes are from the colorspace package
@@ -154,12 +151,12 @@ hcl_palettes(palette="Purples", n=9, plot=T) # look at palette used above for Th
 sequential_hcl(9, "Purples") # get hex codes
 # Threshold: I used "#8B7EBB" to fill the histogram and "#3D1778" to outline the histogram bars
 
-
 #################################################################
 ### Add annotations for Panel B of Figure 1 ###
 
-#TypeII
-#TypeII + annotate("segment", x = 2, xend = 2, y = 0.65, yend = 0.45, colour = "#583A99", linewidth = 1.8, linetype = 2) + annotate("text", x = 6, y = 0.6, label = "Threshold", size = 5, colour = "#583A99") +  annotate("segment", x = 7.8, y = 0.35, xend = 9.8, yend = 0.5, linewidth = 1.8, color = "#0E3F5C") + annotate("segment", x =24.8, y= 0.03, xend = 26.8, yend = 0.18, linewidth = 1.8, color = "#0E3F5C") + annotate("segment", x = 9.8, xend = 26.8, y = 0.5, yend = 0.18, linewidth = 1.8, color = "#0E3F5C") + annotate("segment", x = 7.8, xend = 24.8, y = 0.35, yend = 0.03, linewidth = 1.8, color = "#0E3F5C") + annotate("text", x = 18.3, y = 0.43, label = "Intensity", size = 5, colour = "#0E3F5C") #Need to adjust based on 7/9 meeting
+# add lines for threshold + intensity, labels
+TypeII <- TypeII + annotate("segment", x= 5, xend = 5, y = 0.7, yend = 0.0, colour = "#583A99", linewidth = 1.2, linetype = 2) + annotate("segment", x = 0, xend = 35, y = 0.7, yend = 0.7, linewidth = 1.2, color = "#0E3F5C", linetype = 7, arrow = arrow(angle = 30, length = unit(0.25, "inches"), ends = "both", type = "open")) + annotate("label", label = "Sampling range for negative feedback intensity", x = 18, xend = 28, y = 0.65, yend = 0.65, colour = "#0E3F5C", size = 4, label.padding = unit(0.5, "lines")) + annotate("label", label = "Negative feedback threshold", x =5, xend = 9, y = 0.3, yend = 0.5, colour = "#583A99", size = 4, label.padding = unit(0.5, "lines"))
+TypeII
 
 #################################################################
 ### Combine Panels ###
