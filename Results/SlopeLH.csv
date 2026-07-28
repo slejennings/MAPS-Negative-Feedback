@@ -1,6 +1,5 @@
 model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
-SlopeLH,NA,NA,fixed,NA,Intercept,-4.154,0.302,-4.68,-3.454,1.001,4416.167,4340.53
-SlopeLH,NA,NA,fixed,NA,scMaximum.longevity,-0.26,0.208,-0.659,0.155,1.001,4823.754,5498.691
-SlopeLH,NA,NA,fixed,NA,sclitter_or_clutch_size_n,0.737,0.178,0.377,1.095,1,5160.859,5241.188
-SlopeLH,NA,NA,fixed,NA,scAdult.survival,0.378,0.213,-0.046,0.792,1,5309.131,5426.783
-SlopeLH,NA,NA,random,BirdTree,sd(Intercept),0.375,0.261,0.018,0.975,1.002,2895.287,4193.527
+SlopeLH,NA,NA,fixed,NA,Intercept,-4.124,0.331,-4.681,-3.335,1,3883.803,3893.194
+SlopeLH,NA,NA,fixed,NA,scMaximum.longevity,-0.032,0.16,-0.337,0.305,1.001,4915.645,4985.525
+SlopeLH,NA,NA,fixed,NA,sclitter_or_clutch_size_n,0.604,0.162,0.288,0.92,1.001,4774.745,5170.863
+SlopeLH,NA,NA,random,BirdTree,sd(Intercept),0.409,0.28,0.018,1.044,1.001,2300.054,3895.717

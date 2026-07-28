@@ -1,7 +1,7 @@
 model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
-MinAdultSS,NA,NA,fixed,NA,Intercept,1.334,0.286,0.686,1.804,1,4445.659,4792.408
-MinAdultSS,NA,NA,fixed,NA,scDC,0.214,0.114,-0.024,0.427,1,4120.221,5095.065
-MinAdultSS,NA,NA,fixed,NA,scDM,0.04,0.135,-0.236,0.297,1,4585.832,5030.389
-MinAdultSS,NA,NA,fixed,NA,sc_ssM,0.026,0.104,-0.185,0.224,1,4909.506,5481.939
-MinAdultSS,NA,NA,fixed,NA,sc_ssF,0.06,0.116,-0.165,0.286,1.001,5320.289,5250.932
-MinAdultSS,NA,NA,random,BirdTree,sd(Intercept),0.394,0.215,0.031,0.854,1.001,2193.35,3397.917
+MinAdultSS,NA,NA,fixed,NA,Intercept,1.331,0.289,0.682,1.823,1.001,3898.842,3901.592
+MinAdultSS,NA,NA,fixed,NA,scDC,0.213,0.115,-0.026,0.435,1.001,3683.235,4659.721
+MinAdultSS,NA,NA,fixed,NA,scDM,0.036,0.135,-0.234,0.291,1.001,4565.666,5053.451
+MinAdultSS,NA,NA,fixed,NA,sc_ssM,0.02,0.105,-0.199,0.221,1,5030.895,4947.936
+MinAdultSS,NA,NA,fixed,NA,sc_ssF,0.059,0.119,-0.168,0.298,1,5195.652,5146.749
+MinAdultSS,NA,NA,random,BirdTree,sd(Intercept),0.4,0.217,0.034,0.875,1.001,2448.168,3237.108

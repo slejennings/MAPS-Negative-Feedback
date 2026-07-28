@@ -1,6 +1,6 @@
 model,family,nobs,component,group,term,Estimate,Est.Error,l-95% CI,u-95% CI,Rhat,Bulk_ESS,Tail_ESS
-SlopeTrophic,NA,NA,fixed,NA,Intercept,-4.006,0.57,-5.118,-2.837,1.001,4454.17,4473.873
-SlopeTrophic,NA,NA,fixed,NA,scDiet,0.12,0.216,-0.295,0.542,1,4750.314,5254.057
-SlopeTrophic,NA,NA,fixed,NA,scStrata,0.229,0.145,-0.056,0.512,1,4391.785,4743.768
-SlopeTrophic,NA,NA,fixed,NA,scTrophicLevel,0.239,0.229,-0.216,0.689,1,5070.667,5353.723
-SlopeTrophic,NA,NA,random,BirdTree,sd(Intercept),1.021,0.343,0.325,1.706,1.003,1371.779,1601.049
+SlopeTrophic,NA,NA,fixed,NA,Intercept,-3.999,0.561,-5.097,-2.835,1.001,4453.908,4479.424
+SlopeTrophic,NA,NA,fixed,NA,scDiet,0.119,0.219,-0.309,0.546,1,5052.782,5436.917
+SlopeTrophic,NA,NA,fixed,NA,scStrata,0.23,0.146,-0.052,0.518,1,5087.479,5277.94
+SlopeTrophic,NA,NA,fixed,NA,scTrophicLevel,0.238,0.237,-0.23,0.705,1,5108.998,4892.008
+SlopeTrophic,NA,NA,random,BirdTree,sd(Intercept),1.014,0.339,0.328,1.71,1.001,1491.92,2177.847
