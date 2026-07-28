@@ -1,11 +1,11 @@
 ###### MAPS Project: Density Dependence #######
 ### Script name: Figure1.R
-### Author(s): SLJ
+### Author(s): SLJ, JML
 
 ########### Objective/Description of Script #####################
 # create Figure 1, which contains two panels
 # Panel 1:  map showing locations of MAPS banding stations
-# Panel 2: predicted relationship between productivity and abundance and the two response variables
+# Panel 2: predicted relationship between productivity and abundance and the two extracted negative feedback variables
 #################################################################
 
 ### Setup ###
@@ -79,12 +79,12 @@ MAPS_map <- mapbase +
   xlab("Longitude") + ylab("Latitude") +
   theme(axis.title.x = element_text(size = 12, margin = margin(t=5), family = "Arial"),
         axis.title.y = element_text(size = 12, margin = margin(r=5), family = "Arial"),
-        axis.text = element_text(size=10, family = "Arial"))
+        axis.text = element_text(size=11, family = "Arial"))
 
 MAPS_map
 
 #################################################################
-### Create Panel B of Figure 1: Species curve with extracted response variables ###
+### Create Panel B of Figure 1: Species curve with extracted negative feedback variables ###
 
 # get data for species with a Type 2 curve
 # using NOCA
@@ -118,16 +118,15 @@ Type2 <- ggplot() +
   scale_fill_manual(values = c("#D1FBD4", "#AFE4C4", "#72B4A6")) +
   scale_color_manual(values=c("#715DAA","#2A6D7A")) + # change color of curve lines here
   guides(fill = "none", color = "none") +
-  labs(x = "Adult Abundance", y = "Productivity") +
+  labs(x = "Adult Abundance", y = "Per Capita Productivity") +
   theme_classic() +
   scale_x_continuous(limits = c(0, max(SPEC_dat$Adult)), expand = c(0, 0)) + # move the y-axis so it intercepts with 0 on x-axis
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
-        axis.text = element_text(size=10, family="Arial")) +
-  geom_point(data = slopepoints, aes(x=Adult, y=predictprod), size=2.5, color="#0E3F5C") + # add points and set their size, shape, color
+        axis.text = element_text(size=11, family="Arial")) +
+  geom_point(data = slopepoints, aes(x=Adult, y=predictprod), size=2.25, color="#0E3F5C") + # add points and set their size, shape, color
   xlim(0, 35) # set limits for the x-axis
 
-Type2
 
 # note: will likely give a warning message about missing values because we are trimming the x-axis so some data is not being plotted
 
@@ -135,23 +134,26 @@ Type2
 ### Add annotations for Panel B of Figure 1 ###
 
 # add lines for threshold + intensity, labels
-Type2 <- Type2 + annotate("segment", x= 5, xend = 5, y = 0.7, yend = 0, colour = "#583A99", linewidth = 1.2, linetype = 2) + 
-  annotate("segment", x = 5, xend = 35, y = 0.7, yend = 0.7, linewidth = 1.2, color = "#0E3F5C", linetype = 7, arrow = arrow(angle = 30, length = unit(0.25, "inches"), ends = "both", type = "open")) + 
-  annotate("label", label = "Sampling range for negative feedback intensity", x = 20, xend = 30, y = 0.65, yend = 0.65, colour = "#0E3F5C", size = 4, label.padding = unit(0.5, "lines")) + 
-  annotate("label", label = "Negative feedback \n threshold", x =5, xend = 9, y = 0.2, yend = 0.4, colour = "#583A99", size = 4, label.padding = unit(0.5, "lines"))
-Type2
+Type2_annotate <- Type2 + annotate("segment", x= 5, xend = 5, y = 0.7, yend = 0, colour = "#583A99", linewidth = 1.2, linetype = 2) + 
+  annotate("segment", x = 5, xend = 35, y = 0.7, yend = 0.7, linewidth = 1.2, color = "#0E3F5C", linetype = 7, arrow = arrow(angle = 30, length = unit(0.2, "inches"), ends = "both", type = "open")) + 
+  annotate("label", label = "Sampling range for negative \n feedback intensity", x = 20, y = 0.6, colour = "#0E3F5C", family = 'Arial', size = 4.5, label.padding = unit(0.5, "lines")) + 
+  annotate("label", label = "Negative feedback \n threshold", x = 7, y = 0.13, colour = "#583A99", family = 'Arial', size = 4.5, label.padding = unit(0.5, "lines"))
+Type2_annotate
 
 #################################################################
 ### Combine Panels ###
 
-Fig1 <- MAPS_map / Type2 + 
+(Fig1 <- MAPS_map / Type2_annotate + 
+  plot_layout(width = unit(c(11, 13), c('cm', 'cm')), heights= unit(c(8, 9), c('cm', 'cm'))) &
   plot_annotation(tag_levels = "A") &
-  theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
+  theme(plot.tag = element_text(size=14, family = "Arial", face="bold")))
 
 Fig1
 
 # export plot
 ggsave(here("Figures", "Figure1.pdf"), plot = Fig1, 
-       width = 30 , height = 15, units = "cm",
+       width = 15 , height = 22, units = "cm",
        device = cairo_pdf)
 
+ggsave(here("Figures", "Figure1.png"), plot = Fig1, 
+       width = 15 , height = 22, units = "cm")

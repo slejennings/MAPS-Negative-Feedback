@@ -16,6 +16,7 @@ library(brms)
 library(colorspace)
 library(ggforce)
 library(ggdist)
+library(scales)
 
 #################################################################
 
@@ -58,40 +59,198 @@ RE_m2_df <- STA_RE_m2 %>%
   bind_rows(., .id="SPEC") 
 
 # get identifying info for each plot
-plotinfo <- SppNames_STA %>% 
+info <- SppNames_STA %>% 
   select(SPEC, COMMONNAME, Curve_Type) %>%
   distinct()
 
+# get number of observations for each species
+DD_breed_dat <- readRDS("~/Desktop/MAPS Density Dependence/MAPS-Density-Dependence/Outputs/DD_breed_dat.rds")
+numobs <- DD_breed_dat %>% 
+  group_by(SPEC) %>% # group the data by species
+  summarize(n = n()) %>%
+  mutate(obs = paste("(n = ", n, ")", sep=""))
+
+plotinfo <- left_join(info, numobs) %>%
+  mutate(label = paste(COMMONNAME, obs, sep=" "))
+
 # add identifiers to random effects plot data
 RE_m2_plotdat <- left_join(RE_m2_df, plotinfo) %>%
-  select(SPEC, STA, Adult, estimate__, COMMONNAME, Curve_Type)
+  select(SPEC, STA, Adult, estimate__, COMMONNAME, label, Curve_Type)
 
 # import data from previous step for plotting species-level conditional effects
 FE_m2_plotdf <- readRDS(here("Outputs", "epred_df_m2.rds"))
 
 # add some identifying info (common name for species, classification for shape of curve)
 FE_m2_plotdat <- left_join(FE_m2_plotdf, plotinfo) %>%
-  select(SPEC, COMMONNAME, Curve_Type, Adult, .epred)
+  select(SPEC, COMMONNAME, label, Curve_Type, Adult, .epred)
+
+# break out both FE and RE data into curve types
+
+# Curve type 1
+FE_type1 <- FE_m2_plotdat %>%
+  filter(Curve_Type == "Type 1")
+RE_type1 <- RE_m2_plotdat %>%
+  filter(Curve_Type == "Type 1")
+
+# Curve type 2
+FE_type2 <- FE_m2_plotdat %>%
+  filter(Curve_Type == "Type 2")
+RE_type2 <- RE_m2_plotdat %>%
+  filter(Curve_Type == "Type 2")
+
+# Curve type 3
+FE_type3 <- FE_m2_plotdat %>%
+  filter(Curve_Type == "Type 3")
+RE_type3 <- RE_m2_plotdat %>%
+  filter(Curve_Type == "Type 3")
 
 # plot data for the abundance-productivity relationship for each species and the station-level random effects
-plots_bothRE_FE <- 
-  ggplot(data = FE_m2_plotdat, aes(x = Adult, y = .epred)) + 
-  stat_lineribbon(color = "#1874CD") +
-  scale_fill_manual(values = colorspace::lighten("#1874CD", c(0.95, 0.75, 0.5))) +
+
+# Type 1 Curves
+plots_type1_bothRE_FE <- 
+  ggplot(data = FE_type1, aes(x = Adult, y = .epred)) + 
+  stat_lineribbon(color = "#DA4167") +
+  scale_fill_manual(values = colorspace::lighten("#DA4167", c(0.95, 0.75, 0.5))) +
   guides(fill = "none") +
-  labs(x = "Adult Abundance", y = "Predicted Productivity") +
+  labs(x = "Adult Abundance", y = "Predicted Per Capita Productivity") +
   theme_classic() +
-  geom_line(data = RE_m2_plotdat, 
+  geom_line(data = RE_type1, 
             aes(x = Adult, y = estimate__, group = STA),
             color = "gray40", linewidth = 0.5, alpha=0.2) +
+  scale_y_continuous(labels = scales::label_number(accuracy = 0.1)) +
   theme(strip.background = element_rect(color=NA), # remove border around plot title
-        strip.text = element_text(size=14, , family="Arial"),
-        axis.title = element_text(size=14, family="Arial"),
+        strip.text = element_text(size=12, , family="Arial"),
+        axis.title.y = element_text(size=14, family="Arial", margin = margin(r=8)),
+        axis.title.x = element_text(size=14, family="Arial", margin = margin(t=8)),
         axis.text = element_text(size=11, family="Arial"))
-    
 
-# print onto multiple pages 
-# two columns and three rows of plots for each page
-plots_bothRE_FE + facet_wrap_paginate(~COMMONNAME, scales="free", nrow = 3, ncol = 2, page = 8) # view page 1
+# print page 1
+plots_type1_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 3, ncol = 3, page = 1) + # view page 1
+  labs(title = "Type 1 Curve") +
+  theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
 
+# find number of pages
+# 8 species with type 1 and 12 species per page of plots
+pages_type1 <- ceiling(8/12)
+
+# save and export with each page as separate file
+for (i in 1:pages_type1) {
+  type1plots <- plots_type1_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 3, ncol = 3, page = i) + 
+    labs(title = "Type 1 Curve") +
+    theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
+  
+  ggsave(
+    filename = here("Figures", paste0(" FigureS1_Type1_Page", i, ".png")),
+    plot = type1plots,
+    width = 10,
+    height = 9,
+    dpi = 300
+  )
+}
+
+
+############################
+# Type 2 Curves
+plots_type2_bothRE_FE <- 
+  ggplot(data = FE_type2, aes(x = Adult, y = .epred)) + 
+  stat_lineribbon(color = "#29335C") +
+  scale_fill_manual(values = colorspace::lighten("#29335C", c(0.95, 0.75, 0.5))) +
+  guides(fill = "none") +
+  labs(x = "Adult Abundance", y = "Predicted Per Capita Productivity") +
+  theme_classic() +
+  geom_line(data = RE_type2, 
+            aes(x = Adult, y = estimate__, group = STA),
+            color = "gray40", linewidth = 0.5, alpha=0.2) +
+  scale_y_continuous(labels = scales::label_number(accuracy = 0.1)) +
+  theme(strip.background = element_rect(color=NA), # remove border around plot title
+        strip.text = element_text(size=12, , family="Arial"),
+        axis.title.y = element_text(size=14, family="Arial", margin = margin(r=8)),
+        axis.title.x = element_text(size=14, family="Arial", margin = margin(t=8)),
+        axis.text = element_text(size=11, family="Arial"))
+
+# print page 1
+plots_type2_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 4, ncol = 3, page = 1) + # view page 1
+  labs(title = "Type 2 Curve") +
+  theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
+
+
+# find number of pages
+# 45 species with type 2 and 12 species per page of plots
+pages_type2 <- ceiling(45/12)
+pages_type2
+
+# save and export with each page as separate file
+# pages 1 through 3
+for (i in 1:3) {
+  type2plots <- plots_type2_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 4, ncol = 3, page = i) + 
+    labs(title = "Type 2 Curve") +
+    theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
+  
+  ggsave(
+    filename = here("Figures", paste0(" FigureS1_Type2_Page", i, ".png")),
+    plot = type2plots,
+    width = 10,
+    height = 12,
+    dpi = 300
+  )
+}
+
+# print 4th page separately (only has 9 plots, so reducing nrow and height)
+for (i in 1:1) {
+  type2plots <- plots_type2_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 3, ncol = 3, page = 4) + 
+    labs(title = "Type 2 Curve") +
+    theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
+  
+  ggsave(
+    filename = here("Figures", paste0(" FigureS1_Type2_Page", 4, ".png")),
+    plot = type2plots,
+    width = 10,
+    height = 9,
+    dpi = 300
+  )
+}
+
+############################
+# Type 3 Curves
+plots_type3_bothRE_FE <- 
+  ggplot(data = FE_type3, aes(x = Adult, y = .epred)) + 
+  stat_lineribbon(color = "#F5AF00") +
+  scale_fill_manual(values = colorspace::lighten("#F5AF00", c(0.95, 0.75, 0.5))) +
+  guides(fill = "none") +
+  labs(x = "Adult Abundance", y = "Predicted Per Capita Productivity") +
+  theme_classic() +
+  geom_line(data = RE_type3, 
+            aes(x = Adult, y = estimate__, group = STA),
+            color = "gray40", linewidth = 0.5, alpha=0.2) +
+  scale_y_continuous(labels = scales::label_number(accuracy = 0.1)) +
+  theme(strip.background = element_rect(color=NA), # remove border around plot title
+        strip.text = element_text(size=12, , family="Arial"),
+        axis.title.y = element_text(size=14, family="Arial", margin = margin(r=8)),
+        axis.title.x = element_text(size=14, family="Arial", margin = margin(t=8)),
+        axis.text = element_text(size=11, family="Arial"))
+
+# print page 1
+plots_type3_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 3, ncol = 3, page = 1) + # view page 1
+  labs(title = "Type 3 Curve") +
+  theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
+
+
+# find number of pages
+# 9 species with type 3 and 12 species per page of plots
+pages_type3 <- ceiling(9/12)
+
+# save and export with each page as separate file
+for (i in 1:pages_type3) {
+  type3plots <- plots_type3_bothRE_FE + facet_wrap_paginate(~label, scales="free", nrow = 3, ncol = 3, page = i) + 
+    labs(title = "Type 3 Curve") +
+    theme(plot.title = element_text(size = 14, family = "Arial", face="bold"))
+  
+  ggsave(
+    filename = here("Figures", paste0(" FigureS1_Type3_Page", i, ".png")),
+    plot = type3plots,
+    width = 10,
+    height = 9, # make shorter
+    dpi = 300
+  )
+}
 

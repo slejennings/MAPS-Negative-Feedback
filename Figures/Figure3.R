@@ -5,7 +5,7 @@
 ########### Objective/Description of Script #####################
 # create Figure 3, which contains two panels
 # Panel 1: distribution for threshold and intensity and the correlation between them
-# Panel 2: phylogeny of 62 species with heatmap showing species' values for threshold and intensity
+# Panel 2: phylogeny of 62 species with heatmap showing species' values for threshold, intensity and curve types
 #################################################################
 
 ### Setup ###
@@ -199,14 +199,14 @@ dt <- data.frame(node =c(123, 65, 70, 74, 84, 87, 92, 95, 102, 109),
     geom_tippoint(aes(color=Curve), size=2.5, shape=19) +
     scale_color_manual(values = c("#DA4167", "#29335C", "#F5AF00")) + # CHANGE COLORS
     geom_cladelab(data = dt, 
-                  mapping=aes(node=node, label=familyname, vjust=vjust, hjust=hjust), offset = 30, offset.text = 30, fontsize=4.5) +
+                  mapping=aes(node=node, label=familyname, vjust=vjust, hjust=hjust), offset = 30, offset.text = 30, fontsize=4, family="Arial") +
     guides(color = guide_legend( # to style this legend individually to have different settings that Intensity and Threshold legends, use guides()
-    title = "Curve",
+    title = "Curve (\u03bb = 0.59)",
     position ="right",
     theme(legend.title.position = "top", # put legend title at top
-          legend.title = element_text(size=12, margin=margin(b=8)), # change text for legend title
-          legend.text = element_text(size=11),
-          legend.key.size = unit(0.4, "cm")
+          legend.title = element_text(size=12, margin=margin(b=8), family ="Arial"), # change text for legend title
+          legend.text = element_text(size=11, family ="Arial"),
+          legend.key.size = unit(0.5, "cm")
           )))
 )
           
@@ -236,21 +236,21 @@ threshold_dat <- left_join(DDspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
 
 (thresholdplot <- gheatmap(circ, threshold_dat, offset=-2, width=.15, colnames =F) +
     scale_fill_continuous_sequential(palette = "Purples", name="Threshold", na.value="white", 
-                                     guide= guide_colorbar(title = "Threshold", 
+                                     guide= guide_colorbar(title = "Threshold (\u03bb = 0.57)", 
                                                            theme = theme(
-                                                           legend.title = element_text(size=12, margin=margin(b=8)),
-                                                           legend.text = element_text(size=11),
-                                                           legend.key.size = unit(0.4, "cm")))))
+                                                           legend.title = element_text(size=12, margin=margin(b=8), family="Arial"),
+                                                           legend.text = element_text(size=11, family = "Arial"),
+                                                           legend.key.size = unit(0.5, "cm")))))
                                                          
 part1 <- thresholdplot + ggnewscale::new_scale_fill()
 
 # now add values for intensity
 (threshold_intensity_plot <- gheatmap(part1, intensity_dat, offset=10, width=.15, colnames = F) +
     scale_fill_continuous_sequential(palette = "DarkMint", name="Intensity", na.value="white", breaks = c(0.025, 0.075, 0.125),
-    guide = guide_colorbar(title = "Intensity",
-                           theme = theme(legend.title = element_text(size=12, margin=margin(b=8)),
-                                         legend.text = element_text(size=11),
-                                         legend.key.size = unit(0.4, "cm")))))
+    guide = guide_colorbar(title = "Intensity (\u03bb = 0.74)",
+                           theme = theme(legend.title = element_text(size=12, margin=margin(b=8), family="Arial"),
+                                         legend.text = element_text(size=11, family="Arial"),
+                                         legend.key.size = unit(0.5, "cm")))))
                                                      
 
 #########################################################################
@@ -276,13 +276,13 @@ vars <- threshold_dat %>%
   
 # make a scatterplot to show correlation between the two variables
 (scatter <- ggplot(vars, aes(x=intensity, y=threshold)) +
-  geom_point(size=2, color = "#484554") +
+  geom_point(size=1.5, color = "#484554") +
   theme_classic() +
   labs(x="Intensity", y="Threshold") +
   xlim(0, 0.15) + ylim(0,20) +
   theme(legend.position="none",
-        axis.title = element_text(size=14),
-        axis.text = element_text(size=12))
+        axis.title = element_text(size=12, family="Arial"),
+        axis.text = element_text(size=11, family="Arial"))
   )
 
 # add histograms to sides of scatterplot with ggMarginal from ggExtra package
@@ -290,7 +290,7 @@ vars <- threshold_dat %>%
            size = 2, # size of center scatterplot relative to histograms
            yparams = list(fill = "#8B7EBB", # set specific parameters for threshold histogram
                           col="#3D1778", # col is outline for histogram bars
-                          bins=25), # number of bins in the histogram
+                          bins=20), # number of bins in the histogram
            xparams = list(fill = "#3F8489",  # set specific parameters for intensity histogram
                           col= "#0E3F5C", 
                           bins=25))) 
@@ -299,9 +299,20 @@ vars <- threshold_dat %>%
 
 ### Combine Figure Panels & Save ###
 
-wrap_elements(plot_spacer() + panelA + plot_spacer() + plot_layout(widths=c(0.08, 0.55, 0.08))) / 
+(Fig3 <- wrap_elements(plot_spacer() + panelA + plot_spacer() + plot_layout(widths=c(0.05, 0.3, 0.05))) / 
   wrap_elements(threshold_intensity_plot) +
-  plot_layout(heights=c(7,10)) & plot_annotation(tag_levels = "A") &
-  theme(plot.tag = element_text(size=14, family = "Arial", face="bold"))
+  plot_layout(heights=unit(c(9,15), c('cm', 'cm')), widths=unit(c(20,20), c('cm', 'cm'))) & 
+  plot_annotation(tag_levels = "A") &
+  theme(plot.tag = element_text(size=14, family = "Arial", face="bold")))
 
+
+Fig3
+
+# export plot
+ggsave(here("Figures", "Figure3.pdf"), plot = Fig3, 
+       width = 21 , height = 26, units = "cm",
+       device = cairo_pdf)
+
+ggsave(here("Figures", "Figure3.png"), plot = Fig3, 
+       width = 21 , height = 26, units = "cm")
 
