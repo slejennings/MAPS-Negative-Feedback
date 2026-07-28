@@ -16,6 +16,7 @@ library(here)
 library(ape)
 library(geiger)
 library(stringr) 
+library(confintr)
 
 #################### Combine Bird Codes with Bird Scientific Names ##################
 
@@ -255,8 +256,8 @@ mapsDD_massHWI <- mapsDDspp_morphs %>%
 
 ### Morphometric traits 3 and 4: beak PC1 and beak PC2 
 # these come from Pigot et al. 2020
-# PC1 for beak is beak size
-# PC2 for beak is beak shape
+# PC1 for beak is relative beak size
+# PC2 for beak is relative beak shape
 
 mapsDD_pigot <- pigot %>%
   mutate(Species3_BirdTree = str_replace(Binomial, "_", " ")) %>% # rename column as Species3_BirdTree to facilitate join
@@ -269,32 +270,25 @@ mapsDD_morphometrics <- left_join(mapsDD_massHWI, mapsDD_pigot)
 ##########################################################################################
 #### life history traits #####
 
-### life history traits 1 & 2: adult survival and longevity 
-# Bird et al. uses BirdLife taxonomy
-# we are interested in Maximum.longevity and Adult.survival from this data set
+### life history trait 1: maximum longevity 
+# Bird et al. 2020 uses BirdLife taxonomy
+# we were originally interested in Maximum.longevity and Adult.survival from this data set, but they were strongly correlated
+# proceeding with only longevity to avoid multicollinearity in models
 
 mapsDD_longevity <- longevity %>% 
   rename(Species1_BirdLife = Scientific.name) %>% # Rename the species name column
-  select(Species1_BirdLife, Maximum.longevity, Adult.survival) %>% # Select the traits of interest. We added annual adult survival and max longevity.
+  select(Species1_BirdLife, Maximum.longevity) %>% # Select max longevity
   left_join(DDnames_stats, ., by="Species1_BirdLife") # Join with DD stats by species name column 
 
 # Check if there are missing values for max. longevity 
 mapsDD_longevity %>% filter(is.na(Maximum.longevity)) %>% nrow() #There are no missing values 
 
-# Check if there are missing values for Adult.survival 
-mapsDD_longevity %>% filter(is.na(Maximum.longevity)) %>% nrow() #There are no missing values 
-
-# Examine max longevity and annual adult survival
+# Examine max longevity
 range(mapsDD_longevity$Maximum.longevity) # The range is 6.10 - 14.49
 mean(mapsDD_longevity$Maximum.longevity) # The mean is 9.04 
 hist(mapsDD_longevity$Maximum.longevity)
 
-range(mapsDD_longevity$Adult.survival) # The range is 0.31 - 0.77; Note that 0.31 is the lowest value on the original Bird et al. dataset!
-mean(mapsDD_longevity$Adult.survival) # The mean is 0.52
-hist(mapsDD_longevity$Adult.survival)
-
-
-### Life history trait 3: clutch size
+### Life history trait 2: clutch size
 # from Myhrvold et al. 2015
 head(clutch) 
 
@@ -309,21 +303,17 @@ mapsDD_clutch <- full_join(mapsDD_clutch_BL, mapsDD_clutch_BT) %>%
   select(SPEC, COMMONNAME, Species1_BirdLife, Species2_eBird, Species3_BirdTree,
          litter_or_clutch_size_n)
 nrow(mapsDD_clutch) # all 62 species
-View(mapsDD_clutch)
 
 # combine longevity and adult survival with clutch traits
 mapsDD_lifehistory <-
   left_join(mapsDD_longevity, mapsDD_clutch) 
-
-hist(mapsDD_lifehistory$Adult.survival)
-hist(mapsDD_lifehistory$Maximum.longevity)
-hist(mapsDD_lifehistory$litter_or_clutch_size_n)
 
 ##########################################################################################
 ### sexual selection traits #####
 
 ### SS trait 1: sexual size dimorphism
 # use mapsDDspp_morphs from above
+# these are measurements collected from breeding birds at MAPS stations
 # separate by Sex and find degree of sexual dimorphism using wing length
 mapsDD_sexdimorphism <- mapsDDspp_morphs %>%
   filter(SEX %in% c("M", "F")) %>% # keep only records with known sex
@@ -354,7 +344,6 @@ mapsDD_plumage %>% filter(is.na(Plumage_DC))
 mapsDD_sizeplumage <- left_join(mapsDD_sexdimorphism, mapsDD_plumage) %>%
   select(-Male_plumage_score, -Female_plumage_score, - Wing_F, -Wing_M)
 
-
 ### SS trait 3: mating system
 
 # we are interested in sex.sel.m and sex.sel.f 
@@ -367,7 +356,6 @@ mapsDD_delhey <- delhey %>%
   mutate(Species3_BirdTree = str_replace( phylo, "_", " ")) %>% # make a new column called Species3_BirdTree using the phylo column. Replace underscore with a space
   left_join(DDnames_stats, ., by="Species3_BirdTree")
 
-View(mapsDD_delhey) 
 
 # export sexual selection intensity scores for Males and Females from Delhey et al. 2023
 write.csv(mapsDD_delhey, here("Data", "mapsDD_delhey.csv")) # save the updated delhey data 
@@ -382,7 +370,7 @@ write.csv(mapsDD_delhey, here("Data", "mapsDD_delhey.csv")) # save the updated d
 mapsDD_matingsystem <- read.csv(here("Data", "mapsDD_delhey_update.csv")) # read in updated delhey data 
 # added 3 species to updated file (BUOR, SPTO and WOTH)
 # 1 species updated - NOCA
-view(mapsDD_matingsystem)
+#View(mapsDD_matingsystem)
 
 # how many species per category of sex.sel.m?
 mapsDD_matingsystem %>% group_by(sex.sel.m) %>% count()
@@ -400,7 +388,31 @@ mapsDD_matingsystem %>% filter(is.na(sex.sel.f))
 # combine mating system with plumage dichromatism and size dimorphism scores
 mapsDD_sexualselection <- left_join(mapsDD_sizeplumage, mapsDD_matingsystem)
 
-view(mapsDD_sexualselection) 
+View(mapsDD_sexualselection) 
+
+# check degree of correlation between some of the variables to make sure they can be used in the same model
+mapsDD_SScheck <- mapsDD_sexualselection %>% filter(!is.na(Plumage_DC))
+
+# plumage dichromatism and size dimorphism
+set.seed(285)
+confintr::ci_cor(mapsDD_SScheck$Plumage_DC, mapsDD_SScheck$Wing_DM, method="spearman", type="bootstrap") # low
+
+# plumage dichromatism and degree of polygyny in males
+set.seed(597)
+confintr::ci_cor(mapsDD_SScheck$Plumage_DC, mapsDD_SScheck$sex.sel.m, method="spearman", type="bootstrap") # low
+
+# size dimorphism and degree of polygyny in males
+set.seed(463)
+confintr::ci_cor(mapsDD_SScheck$Wing_DM, mapsDD_SScheck$sex.sel.m, method="spearman", type="bootstrap") # low
+
+# lastly, look at Beak PC2 and trophic level
+# Both ended up showing the same trend in their respective trait models and it looks like Beak PC2 (in our 62 species) reflects trophic level
+# use a correlation test to further explore this relationship
+mapsDD_combo <- left_join(mapsDD_morphometrics, mapsDD_trophic)
+set.seed(175)
+confintr::ci_cor(mapsDD_combo$Beak_PC2, mapsDD_combo$TrophicLevel, method="spearman", type="bootstrap")
+plot(mapsDD_combo$Beak_PC2, mapsDD_combo$TrophicLevel, xlab="Beak PC2", ylab = "Trophic Level")
+# higher Beak PC2 scores (long beaks relative to their depth and width) occupy higher trophic levels (have a diet with a greater % of animal based sources)
 
 ##########################################################################################
 ####### Export objects as rds files to be used in trait pgls models ###########
@@ -409,4 +421,3 @@ saveRDS(mapsDD_morphometrics, here("Outputs", "mapsDD_morphometrics_m2.rds"))
 saveRDS(mapsDD_lifehistory, here("Outputs", "mapsDD_lifehistory_m2.rds"))
 saveRDS(mapsDD_trophic, here("Outputs", "mapsDD_trophic_m2.rds"))
 saveRDS(mapsDD_sexualselection, here("Outputs", "mapsDD_sexualselection_m2.rds"))
-

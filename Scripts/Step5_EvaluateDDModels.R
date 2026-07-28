@@ -306,7 +306,8 @@ write.csv(ave_negative_slope_m2, here("Outputs", "AverageNegativeSlopebySpecies_
 
 ############# Examine correlation between threshold and intensity #################
 
-confintr::ci_cor(ave_negative_slope_m2$min_adult, ave_negative_slope_m2$estimate, method="spearman", type="bootstrap")
+set.seed(6503)
+confintr::ci_cor(ave_negative_slope_m2$min_adult, abs(ave_negative_slope_m2$estimate), method="spearman", type="bootstrap")
 
 ############# Measure phylogenetic signal in threshold and intensity #################
 
@@ -408,8 +409,8 @@ lambda_threshold
 ## Is there phylogenetic signal in the average slope (intensity)?
 # with standard error of the intensity value included
 set.seed(327)
-lambda_slope <- fitContinuous(et$phy, DDspp_dat[12], SE=DDspp_dat[15], model = "lambda")
-lambda_slope
+lambda_intensity <- fitContinuous(et$phy, DDspp_dat[12], SE=DDspp_dat[15], model = "lambda")
+lambda_intensity
 
 ## Is there phylogenetic signal in the curve type classification?
 set.seed(418)

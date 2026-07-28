@@ -111,15 +111,14 @@ hist(log(abs(DD_life$estimate))) # take absolute value and log transform
 dat_LH <- dat_LH |>
   dplyr::mutate(
     scMaximum.longevity      = as.numeric(scale(Maximum.longevity)),
-    sclitter_or_clutch_size_n= as.numeric(scale(litter_or_clutch_size_n)),
-    scAdult.survival         = as.numeric(scale(Adult.survival))
+    sclitter_or_clutch_size_n= as.numeric(scale(litter_or_clutch_size_n))
   )
 
 ##################################################################################
 ### Life History Model 1 ###
 
 # Response variable: threshold (min_adult) 
-# Explanatory variables: longevity, clutch size, adult survival
+# Explanatory variables: longevity, clutch size
 # Using negative binomial distribution for model
 
 # center Intercept near the typical count on the log scale
@@ -147,11 +146,11 @@ priors_nb_LH
 
 # run NB model
 minadult_LH_mod_nb <- brm(
-  min_adult ~ scMaximum.longevity + sclitter_or_clutch_size_n + scAdult.survival + (1|gr(BirdTree, cov = LH_cov)),
+  min_adult ~ scMaximum.longevity + sclitter_or_clutch_size_n + (1|gr(BirdTree, cov = LH_cov)),
   data = dat_LH,
   family = negbinomial(),
   data2 = list(LH_cov = LH_cov),
-  control = list(adapt_delta = 0.999), # increased to 0.999
+  control = list(adapt_delta = 0.99), # increased to 0.99
   backend = "cmdstanr",
   init = "random",
   save_pars = save_pars(all = TRUE),
@@ -169,9 +168,7 @@ tidy(minadult_LH_mod_nb)
 fixef(minadult_LH_mod_nb, probs=c(0.05, 0.95)) # look at 90% CrI
 fixef(minadult_LH_mod_nb, probs=c(0.075, 0.925)) # look at 85% CrI
 
-# negative relationship for adult survival. 95% CrI does not overlap zero
-# negative trend for clutch size. 85% CrI does not overlap zero
-# positive relationship for longevity. 95% CrI does not overlap zero
+# no notable relationships
 
 # trace and density plots
 color_scheme_set("brightblue")
@@ -185,16 +182,13 @@ pp_check(minadult_LH_mod_nb, type="intervals", ndraws = 100)
 
 ### Plot results ###
 
-plot(conditional_effects(minadult_LH_mod_nb, effects="scAdult.survival"), points = TRUE)
-plot(conditional_effects(minadult_LH_mod_nb, effects="sclitter_or_clutch_size_n"), points = TRUE)
-plot(conditional_effects(minadult_LH_mod_nb, effects="scMaximum.longevity"), points = TRUE) 
-
+# no results to plot
 
 ##################################################################################
 ### Life History Model 2 ###
 
 # Response variable: estimated intensity (slope)
-# Explanatory variables: longevity, clutch size, adult survival
+# Explanatory variables: longevity, clutch size
 
 
 # Take the absolute value of the slope estimate to make all the values positive 
@@ -225,15 +219,14 @@ priors_logn_LH
 
 # Run lognormal model
 # use scaled and centered variables in dat_LH
-# for this model, increase adapt delta to 0.99 and tree depth to 15
 # set init to "random" to reduce starting at extreme values
 
 slope_LH_mod_logn <- brm(
-  abs(estimate) ~ scMaximum.longevity + sclitter_or_clutch_size_n + scAdult.survival + (1|gr(BirdTree, cov = LH_cov)),
+  abs(estimate) ~ scMaximum.longevity + sclitter_or_clutch_size_n + (1|gr(BirdTree, cov = LH_cov)),
   data = dat_LH,
   family = lognormal(link="identity"),
   data2 = list(LH_cov = LH_cov),
-  control = list(adapt_delta = 0.999),
+  control = list(adapt_delta = 0.99),
   save_pars = save_pars(all = TRUE),
   backend = "cmdstanr",
   init = "random",
@@ -254,13 +247,10 @@ fixef(slope_LH_mod_logn, probs=c(0.05, 0.95)) # look at 90% CrI
 fixef(slope_LH_mod_logn, probs=c(0.075, 0.925)) # look at 85% CrI
 
 # positive relationship for clutch size. 95% CrI does not overlap zero
-# positive relationship for adult survival. 90% CrI does not overlap 
-
 
 # trace and density plots
 plot(slope_LH_mod_logn, nvariables = 4, ask = FALSE, theme=theme_minimal()) 
 # posterior distribution of SD of tree still skewed, but this seems to reflect little phylogenetic signal
-
 
 # posterior predictive check
 pp_check(slope_LH_mod_logn) + xlim(0, 0.3)
@@ -269,9 +259,6 @@ pp_check(slope_LH_mod_logn, type="ecdf_overlay")
 pp_check(slope_LH_mod_logn, type="intervals", ndraws = 100)
 
 ### Plot results ###
-
-# adult survival
-plot(conditional_effects(slope_LH_mod_logn, effects="scAdult.survival"), points = TRUE) 
 
 # clutch size
 plot(conditional_effects(slope_LH_mod_logn, effects="sclitter_or_clutch_size_n"), points = TRUE) 
@@ -587,14 +574,14 @@ priors_logn_Trophic <- c(
 
 
 # run lognormal model
-# for this model, increased adapt delta and tree depth
+# for this model, increased adapt delta
 # set init to "random" to reduce starting at extreme values
 slope_Trophic_mod_logn <- brm(
   abs(estimate) ~ scDiet + scStrata + scTrophicLevel + (1|gr(BirdTree, cov = trophic_cov)),
   data = dat_trophic,
   family = lognormal(link="identity"),
   data2 = list(trophic_cov = trophic_cov),
-  control = list(adapt_delta = 0.999),
+  control = list(adapt_delta = 0.99),
   backend = "cmdstanr",
   init = "random",
   save_pars = save_pars(all = TRUE),
@@ -698,13 +685,12 @@ priors_nb_SS <- c(
 
 
 # run NB model
-
 minadult_SS_mod_nb <- brm(
   min_adult ~ scDC + scDM + sc_ssM + sc_ssF  + (1|gr(BirdTree, cov = ss_cov)),
   data = dat_ss,
   family = negbinomial(),
   data2 = list(ss_cov = ss_cov),
-  control = list(adapt_delta = 0.999), 
+  control = list(adapt_delta = 0.99), 
   save_pars = save_pars(all = TRUE),
   prior = priors_nb_SS,
   backend = "cmdstanr",
@@ -757,7 +743,7 @@ priors_logn_SS <- c(
   prior(normal(0, 1), class = "b"),
   
   # Intercept centered at log-median outcome, weak scale
-  prior(student_t(3, -4.134, 2), class = "Intercept"), ## adding mu0_logn_SS by hand here as -4.134
+  prior(student_t(3, -4.134, 2), class = "Intercept"),
   
   # Lognormal residual SD (on log scale): weak, using 0.5 rather than 1 to decrease divergent transitions 
   prior(student_t(3, 0, 0.5), class = "sigma"),
@@ -768,7 +754,7 @@ priors_logn_SS <- c(
 
 
 # run lognormal model
-# increased adapt delta and tree depth to help with divergent transitions
+# increased adapt delta to help with divergent transitions
 # set init to "random" to reduce starting at extreme values
 
 slope_SS_mod_logn <- brm(
@@ -796,7 +782,7 @@ tidy(slope_SS_mod_logn)
 fixef(slope_SS_mod_logn, probs=c(0.05, 0.95))
 fixef(slope_SS_mod_logn, probs=c(0.075, 0.925))
 
-# positive relationship for ssM. 95% CrI does not overlap zero
+# negative relationship for ssM. 95% CrI does not overlap zero
 # negative trend for dichromatism. 85% CrI does not overlap zero
 
 # trace and density plots
