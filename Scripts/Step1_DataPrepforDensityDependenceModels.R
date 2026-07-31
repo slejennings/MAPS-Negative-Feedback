@@ -14,7 +14,6 @@
 # load packages
 library(tidyverse)
 library(here)
-library(lubridate)
 
 
 # Import bird capture data 

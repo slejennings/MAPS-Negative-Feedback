@@ -15,7 +15,6 @@ library(tidyverse)
 library(here)
 library(ape)
 library(geiger)
-library(stringr) 
 library(confintr)
 
 #################### Combine Bird Codes with Bird Scientific Names ##################
@@ -354,7 +353,8 @@ mapsDD_delhey <- delhey %>%
   select(phylo,sex.sel.m, sex.sel.f) %>% # keep two columns only
   distinct() %>% # keep only one row per species. drop extra row associated with male vs female
   mutate(Species3_BirdTree = str_replace( phylo, "_", " ")) %>% # make a new column called Species3_BirdTree using the phylo column. Replace underscore with a space
-  left_join(DDnames_stats, ., by="Species3_BirdTree")
+  left_join(DDnames_stats, ., by="Species3_BirdTree") %>%
+  select(-min_adult, -estimate, -conf.low, -conf.high, -n)
 
 
 # export sexual selection intensity scores for Males and Females from Delhey et al. 2023

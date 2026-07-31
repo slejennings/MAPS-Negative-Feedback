@@ -12,15 +12,12 @@
 
 # load packages
 library(here)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(tidybayes)
 library(bayesplot)
 library(ggspatial)
 library(sf)
-library(terra)
 library(colorspace)
-library(rnaturalearth)
 library(ggdist)
 library(ggnewscale)
 library(patchwork)
