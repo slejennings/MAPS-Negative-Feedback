@@ -129,20 +129,34 @@ Wilman, Hamish; Belmaker, Jonathan; Simpson, Jennifer; de la Rosa, Carolina; Riv
 ***File Description:*** 
 
 ***Columns:***
-SPEC
+SPEC 
+
 COMMONNAME
+
 Diet-Inv
+
 Diet-Vend
+
 Diet-Vfish
+
 Diet-Vunk
+
 Diet-Scav
+
 Diet-Fruit
+
 Diet-Nect
+
 Diet-Seed
+
 Diet-PlantO
+
 Diet-5Cat
+
 Diet-Soruce
+
 Diet-Certainty
+
 Diet-EnteredBy
 
 -------------------------------------------------------------------------------------------------------------------
@@ -151,9 +165,13 @@ Diet-EnteredBy
 ***File Description:*** Institute for Bird Populations (IBP) standardized alpha bird species code list updated for 2023
 
 ***Columns:***
+
 SPEC: 4 letter species code
+
 COMMONNAME: English common name
+
 SCINAME: Scientific name
+
 SPEC6: 6 letter species code
 
 -------------------------------------------------------------------------------------------------------------------
@@ -169,9 +187,13 @@ SPEC6: 6 letter species code
 ***File Description:*** simplified version of the species life history traits from Bird et al. 2020
 
 ***Columns:***
+
 Scientific.name: species scientific name
+
 Adult.survival: the estimated adult survival rate for each species
+
 Age.at.first.reproduction: the age of first reproductive event for each species in years
+
 Maximum.longevity: the maximum lifespan for each species in years
 
 -------------------------------------------------------------------------------------------------------------------
@@ -219,12 +241,19 @@ Maximum.longevity: the maximum lifespan for each species in years
 ***File Description:*** 
 
 ***Columns:***
+
 SPEC
+
 COMMONNAME
+
 Species1_BirdLife
+
 Species2_eBird
+
 Species3_BirdTree
+
 sex.sel.m
+
 sex.sel.f
 
 -------------------------------------------------------------------------------------------------------------------
@@ -236,12 +265,19 @@ sex.sel.f
 ***Columns:***
 
 SPEC
+
 COMMONNAME
+
 Species1_BirdLife
+
 Species2_eBird
+
 Species3_BirdTree
+
 phylo
+
 sex.sel.m
+
 sex.sel.f
 
 
