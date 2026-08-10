@@ -18,6 +18,7 @@ library(Polychrome)
 library(tidyverse)
 library(patchwork)
 library(ggtext)
+library(magick)
 
 #########################################################################
 ### Load required files ###
@@ -41,6 +42,11 @@ KEWA_dat <- epred_df_m2 %>%
 # Type 3 - BEWR
 BEWR_dat <- epred_df_m2 %>%
   filter(SPEC == "BEWR") # specify the species to keep
+
+# Read in the png art of the 3 species 
+BCCH_img <- image_read("Figures/BCCH.png")
+KEWA_img <- image_read("Figures/KEWA.png")
+BEWR_img <- image_read("Figures/BEWR.png")
   
 #########################################################################
 # Make a plot for each species
@@ -55,8 +61,9 @@ type1plot <- ggplot(data = BCCH_dat, aes(x = Adult, y = .epred)) +
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
         axis.text = element_text(size=11, family="Arial"), 
-        plot.title = element_markdown(size = 14, hjust = 0.5, family = "Arial")) # use element_markdown to implement bold font in title specified above
-type1plot
+        plot.title = element_markdown(size = 14, hjust = 0.5, family = "Arial")) + # use element_markdown to implement bold font in title specified above
+  annotation_custom(grid::rasterGrob(image = BCCH_img), xmin = 14.3, xmax = 33.2, ymin = 1.3, ymax = 2.8) # add BCCH image
+type1plot 
 
 # we probably want to add a title or text annotation to this plot that says "Type 1"
 # also, it could be useful to differentiate the types using colors
@@ -71,7 +78,8 @@ type2plot <- ggplot(data = KEWA_dat, aes(x = Adult, y = .epred)) +
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
         axis.text = element_text(size=11, family="Arial"), 
-        plot.title = element_markdown(size = 14, hjust = 0.5, family = "Arial")) # use element_markdown to implement bold font in title specified above
+        plot.title = element_markdown(size = 14, hjust = 0.5, family = "Arial")) + # use element_markdown to implement bold font in title specified above
+  annotation_custom(grid::rasterGrob(image = KEWA_img), xmin = 14.2, xmax = 33.2, ymin = 0.374, ymax = 0.94) # add KEWA image
 type2plot 
 
 type3plot <- ggplot(data = BEWR_dat, aes(x = Adult, y = .epred)) + 
@@ -84,7 +92,8 @@ type3plot <- ggplot(data = BEWR_dat, aes(x = Adult, y = .epred)) +
   theme(axis.title.x = element_text(size=12, family="Arial", margin = margin(t=5)),
         axis.title.y = element_text(size=12, family="Arial", margin = margin(r=5)),
         axis.text = element_text(size=11, family="Arial"), 
-        plot.title = element_markdown(size = 14, hjust = 0.5, family = "Arial")) # use element_markdown to implement bold font in title specified above
+        plot.title = element_markdown(size = 14, hjust = 0.5, family = "Arial")) + # use element_markdown to implement bold font in title specified above
+  annotation_custom(grid::rasterGrob(image = BEWR_img), xmin = 15.5, xmax = 35.20, ymin = 1.15, ymax = 3.01) # add BEWR image
 type3plot 
 
 #########################################################################
