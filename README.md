@@ -118,7 +118,7 @@ See information at this site for how to interpret the columns in this file: http
 ***File Description:*** Species foraging and diet traits from EltonTraits 1.0 (Wilman et al. 2014)
 
 ***Columns:***
-See the following FigShare folder for descriptions of the EltonTraits 1.0 dataset, including interpretations for column names
+See the following FigShare folder for descriptions of the EltonTraits 1.0 dataset:
 
 Wilman, Hamish; Belmaker, Jonathan; Simpson, Jennifer; de la Rosa, Carolina; Rivadeneira, Marcelo M.; Jetz, Walter (2016). EltonTraits 1.0: Species-level foraging attributes of the world's birds and mammals. Wiley. Collection. https://doi.org/10.6084/m9.figshare.c.3306933.v1
 
@@ -184,7 +184,7 @@ SPEC6: 6 letter species code
 
 ***File name:*** longevity.csv
 
-***File Description:*** simplified version of the species life history traits from Bird et al. 2020
+***File Description:*** simplified version of species life history traits from Bird et al. 2020
 
 ***Columns:***
 
