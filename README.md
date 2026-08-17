@@ -62,7 +62,7 @@ Scripts
 
 ***File name:*** aminote.csv
 
-***File Description:*** Species clutch traits from the Amniote life-history database on birds, mammals and reptiles (Myhrvold et al. 2015).
+***File Description:*** Clutch traits from the Amniote life-history database on birds, mammals and reptiles (Myhrvold et al. 2015).
 
 ***Columns:***
 The amniote life-history dataset along with descriptions of the various columns can be found in the following FigShare folder:
@@ -85,17 +85,23 @@ https://figshare.com/s/b990722d72a26b5bfead
 
 ***File Description:*** 
 
+Conversion between bird scientific names using different taxonomies. Adapted from AVONET (Tobias et al. 2019).
+
 ***Columns:***
-Avibase.ID
-Species1_BirdLife
-Species2_eBird
-Species3_BirdTree
+
+Avibase.ID: alphanumeric code assigned by the Avibase database to each species
+
+Species1_BirdLife: scientific name using the BirdLife International taxonomy
+
+Species2_eBird: scientific name using the eBird/Clements taxonomy
+
+Species3_BirdTree: scientific name using the Bird Tree (Jetz et al. 2012) taxonomy
 
 -------------------------------------------------------------------------------------------------------------------
 
 ***File name:*** delhey.csv
 
-***File Description:*** Species sexual selection scores (degree of polygyny in males and degree of polyandry in females) from Delhey et al. 2023.
+***File Description:*** Sexual selection scores (degree of polygyny in males and degree of polyandry in females) for species from Delhey et al. 2023
 
 ***Columns:***
 
@@ -106,7 +112,7 @@ https://www.pnas.org/doi/10.1073/pnas.2217692120
 
 ***File name:*** ebird_taxonomy_v2022.csv
 
-***File Description:*** The 2022 version of the eBird/Clements Checklist. The eBird/Clements Checklist is an integrated global taxonomy for the birds of the world.
+***File Description:*** The 2022 version of the eBird/Clements Checklist. The eBird/Clements Checklist is an integrated global taxonomy for the birds of the world
 
 ***Columns:***
 
@@ -118,6 +124,7 @@ See information at this site for how to interpret the columns in this file: http
 ***File Description:*** Species foraging and diet traits from EltonTraits 1.0 (Wilman et al. 2014)
 
 ***Columns:***
+
 See the following FigShare folder for descriptions of the EltonTraits 1.0 dataset:
 
 Wilman, Hamish; Belmaker, Jonathan; Simpson, Jennifer; de la Rosa, Carolina; Rivadeneira, Marcelo M.; Jetz, Walter (2016). EltonTraits 1.0: Species-level foraging attributes of the world's birds and mammals. Wiley. Collection. https://doi.org/10.6084/m9.figshare.c.3306933.v1
@@ -128,36 +135,39 @@ Wilman, Hamish; Belmaker, Jonathan; Simpson, Jennifer; de la Rosa, Carolina; Riv
 
 ***File Description:*** 
 
+Contains updated diet information for 3 of the species dataset. These species had low confidence associated with the diet information provided in Elton Traits 1.0 database (Wilman et al. 2014) noted by a score of "C" in the Diet-Certainty column. We researched their diets using the Birds of the World Database (Billerman et al. 2026) and updated their scores for the various diet categories. This sheet contains the updated information
+
 ***Columns:***
-SPEC 
 
-COMMONNAME
+SPEC: species 4-letter code 
 
-Diet-Inv
+COMMONNAME: English common name
 
-Diet-Vend
+Diet-Inv: Percentage of diet made up of invertebrates. In increments of 10%
 
-Diet-Vfish
+Diet-Vend: Percentage of diet made up of endothermic vertebrates. In increments of 10%
 
-Diet-Vunk
+Diet-Vfish:  Percentage of diet made up of fish. In increments of 10%
 
-Diet-Scav
+Diet-Vunk: Percentage of diet made up of unknown vertebrates. In increments of 10%
 
-Diet-Fruit
+Diet-Scav: Percentage of diet made up of scavenged items (e.g., carrion, offal, carcasses, garbage). In increments of 10%
 
-Diet-Nect
+Diet-Fruit: Percentage of diet made up of fruit. In increments of 10%
 
-Diet-Seed
+Diet-Nect: Percentage of diet made up of nectar. In increments of 10%
 
-Diet-PlantO
+Diet-Seed: Percentage of diet made up of seeds. In increments of 10%
 
-Diet-5Cat
+Diet-PlantO: Percentage of diet made up of other plant material (not accounted for in other categories). In increments of 10%
 
-Diet-Soruce
+Diet-5Cat: Assigns each species to one of 5 diet groups (PlantSeed, FruiNect, Invertebrate, VertFishScav or Omnivore)
 
-Diet-Certainty
+Diet-Source: Specifies the source(s) used to assign the species' diet information
 
-Diet-EnteredBy
+Diet-Certainty: Contains the confidence code to reflect the reliability of species assignments
+
+Diet-EnteredBy: Initials of person who entered the data
 
 -------------------------------------------------------------------------------------------------------------------
 ***File name:*** IBP-AOS-LIST23.csv
@@ -208,7 +218,9 @@ Maximum.longevity: the maximum lifespan for each species in years
 
 ***File Description:*** Contains all the banding records for captured birds
 
-***Columns:*** refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
+***Columns:*** 
+
+Refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -216,7 +228,9 @@ Maximum.longevity: the maximum lifespan for each species in years
 
 ***File Description:*** Contains information about each station's operation, including the time each mist net was opened and closed
 
-***Columns:*** refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
+***Columns:*** 
+
+Refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -224,7 +238,9 @@ Maximum.longevity: the maximum lifespan for each species in years
 
 ***File Description:*** Certain stations/years were missing effort information in MAPS_EFFORT_net_open_and_close_times.csv. This file was provided to us by MAPS staff to fill in the missing values. Its structure is similar to MAPS_EFFORT_net_open_and_close_times.csv
 
-***Columns:*** refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
+***Columns:*** 
+
+Refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -232,7 +248,9 @@ Maximum.longevity: the maximum lifespan for each species in years
 
 ***File Description:*** Contains information about each MAPS station, including geographic coordinates and years of operation
 
-***Columns:*** refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
+***Columns:***
+
+Refer to “MAPS-database_codes-and-structures.pdf” for a complete description of the columns and data within this file
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -240,21 +258,23 @@ Maximum.longevity: the maximum lifespan for each species in years
 
 ***File Description:*** 
 
+We exported the sexual selection scores obtained from Delhey et al. 2023 for the 62 species in our analysis, which are contained in mapsDD_delhey.csv. If a species had scores of 0 for sex.sel.m and 0 for sex.sel.f, we investigated it using the species accounts on Birds of the World (Billerman et al. 2026). These are species marked as monogamous and yet many species exhibit some degree of non-monogamy when carefully studied. If the Birds of the World species account contain more recent information to suggest an alternative mating system, we updated their score. This sheet contains the information for any updated species
+
 ***Columns:***
 
-SPEC
+SPEC: species 4 letter code
 
-COMMONNAME
+COMMONNAME: English common name
 
-Species1_BirdLife
+Species1_BirdLife: Scientific name using BirdLife International taxonomy
 
-Species2_eBird
+Species2_eBird: Scientific name using eBird/Clements taxonomy
 
-Species3_BirdTree
+Species3_BirdTree: Scientific name using Bird Tree taxonomy (Jetz et al. 2012)
 
-sex.sel.m
+sex.sel.m: Sexual selection score that reflects the degree of polygyny in males. Ranges from 0 to 5
 
-sex.sel.f
+sex.sel.f: Sexual selection score that reflects the and degree of polyandry in females. Ranges from 0 to 5
 
 -------------------------------------------------------------------------------------------------------------------
 
@@ -262,23 +282,24 @@ sex.sel.f
 
 ***File Description:*** 
 
+We exported the sexual selection scores obtained from Delhey et al. 2023 for the 62 species in our analysis. This sheet contains that information. If a species had scores of 0 for sex.sel.m and 0 for sex.sel.f, we investigated it using the species accounts on Birds of the World (Billerman et al. 2026). These are species marked as monogamous and yet many species exhibit some degree of non-monogamy when carefully studied. If the Birds of the World species account contain more recent information to suggest an alternative mating system, we updated their score (see mapsDD_delhey_update.csv)
+
+
 ***Columns:***
 
-SPEC
+SPEC: species 4 letter code
 
-COMMONNAME
+COMMONNAME: English common name
 
-Species1_BirdLife
+Species1_BirdLife: Scientific name using BirdLife International taxonomy
 
-Species2_eBird
+Species2_eBird: Scientific name using eBird/Clements taxonomy
 
-Species3_BirdTree
+Species3_BirdTree: Scientific name using Bird Tree taxonomy (Jetz et al. 2012)
 
-phylo
+sex.sel.m: Sexual selection score that reflects the degree of polygyny in males. Ranges from 0 to 5
 
-sex.sel.m
-
-sex.sel.f
+sex.sel.f: Sexual selection score that reflects the and degree of polyandry in females. Ranges from 0 to 5
 
 
 -------------------------------------------------------------------------------------------------------------------
@@ -305,7 +326,7 @@ Please see the following Dryad folder where the data associated with Dale et al.
 
 ### SCRIPTS
 
-**Folder Contents:** X files, file format(s): .R
+**Folder Contents:** 7 files, file format(s): .R
 
 **Folder Description:** contains R scripts to analyze the data and to generate the findings in the manuscript. The scripts are sequential, should be run in numerical order, and are labeled accordingly. At the beginning of each R script is a section titled “Objectives/Description of the Script” which details the main tasks accomplished by each file. We refer you to this section in lieu of providing an additional description of each file here.
 
@@ -394,7 +415,7 @@ Models
 
 **Folder:** Models
 
-**Folder Contents:** X files, files format(s): .rds
+**Folder Contents:** 12 files, files format(s): .rds
 
 **Folder Description:** contains files related to the species-specific models that are produced by the R Scripts. Models in this folder were run using different priors, different random effects structures, and also include steps to obtain accurate ELPD values from models to be used in model comparison. As all files are generated by the accompanying code, we have not provided individual descriptions. Files are exported and saved as .rds
 
