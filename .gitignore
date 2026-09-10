@@ -53,3 +53,8 @@ rsconnect/
 MAPS_BANDING_capture_data.csv
 MAPS_EFFORT_net_open_and_close_times.csv
 m2_allspp_loo.rds
+
+# bird images for figures
+BCCH.png
+BEWR.png
+KEWA.png
