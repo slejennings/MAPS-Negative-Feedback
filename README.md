@@ -1,4 +1,4 @@
-# MAPS Density Dependence README
+# MAPS Negative Feedback README
 
 ############################################################################
 ### OVERVIEW
@@ -6,7 +6,7 @@
 
 This repository contains data and code for the analyses in the manuscript "Traits shape demographic regulation in North American birds". The analyses are organized into an R Project, which will reproduce the results, tables, and figures presented in the manuscript. This Read Me file describes the required software and the organization of the R Project and the associated files.
 
-Important: certain files are too large to sync with this GitHub repository and need to be downloaded from the accompanying Google Drive folder. This applies to any file marked with an asterisk (*) at the end of the filename. Link to folder: XXXXXX 
+Important: certain files are too large to sync with this GitHub repository and need to be downloaded from the accompanying Google Drive folder. This applies to any file marked with an asterisk (*) at the end of the filename. Link to folder: https://shorturl.at/VuObK
 
 ############################################################################
 ### CORRESPONDENCE
@@ -254,11 +254,11 @@ Refer to “MAPS-database_codes-and-structures.pdf” for a complete description
 
 -------------------------------------------------------------------------------------------------------------------
 
-***File name:*** mapsDD_delhey_update.csv
+***File name:*** mapsNF_delhey_update.csv
 
 ***File Description:*** 
 
-We exported the sexual selection scores obtained from Delhey et al. 2023 for the 62 species in our analysis, which are contained in mapsDD_delhey.csv. If a species had scores of 0 for sex.sel.m and 0 for sex.sel.f, we investigated it using the species accounts on Birds of the World (Billerman et al. 2026). These are species marked as monogamous and yet many species exhibit some degree of non-monogamy when carefully studied. If the Birds of the World species account contain more recent information to suggest an alternative mating system, we updated their score. This sheet contains the information for any updated species
+We exported the sexual selection scores obtained from Delhey et al. 2023 for the 62 species in our analysis, which are contained in mapsNF_delhey.csv. If a species had scores of 0 for sex.sel.m and 0 for sex.sel.f, we investigated it using the species accounts on Birds of the World (Billerman et al. 2026). These are species marked as monogamous and yet many species exhibit some degree of non-monogamy when carefully studied. If the Birds of the World species account contain more recent information to suggest an alternative mating system, we updated their score. This sheet contains the information for any updated species
 
 ***Columns:***
 
@@ -278,11 +278,11 @@ sex.sel.f: Sexual selection score that reflects the and degree of polyandry in f
 
 -------------------------------------------------------------------------------------------------------------------
 
-***File name:*** mapsDD_delhey.csv
+***File name:*** mapsNF_delhey.csv
 
 ***File Description:*** 
 
-We exported the sexual selection scores obtained from Delhey et al. 2023 for the 62 species in our analysis. This sheet contains that information. If a species had scores of 0 for sex.sel.m and 0 for sex.sel.f, we investigated it using the species accounts on Birds of the World (Billerman et al. 2026). These are species marked as monogamous and yet many species exhibit some degree of non-monogamy when carefully studied. If the Birds of the World species account contain more recent information to suggest an alternative mating system, we updated their score (see mapsDD_delhey_update.csv)
+We exported the sexual selection scores obtained from Delhey et al. 2023 for the 62 species in our analysis. This sheet contains that information. If a species had scores of 0 for sex.sel.m and 0 for sex.sel.f, we investigated it using the species accounts on Birds of the World (Billerman et al. 2026). These are species marked as monogamous and yet many species exhibit some degree of non-monogamy when carefully studied. If the Birds of the World species account contain more recent information to suggest an alternative mating system, we updated their score (see mapsNF_delhey_update.csv)
 
 
 ***Columns:***
@@ -332,7 +332,7 @@ Please see the following Dryad folder where the data associated with Dale et al.
 
 **List of Files:**
 
-Step1_DataPrepfprDensityDependenceModels.R
+Step1_DataPrepforNegativeFeedbackModels.R
 
 Step2_DetermineCustomPriors.R
 
@@ -340,7 +340,7 @@ Step3_PriorSensitivityTesting.R
 
 Step4_ModelComparison.R
 
-Step5_EvaluateDDModels.R
+Step5_EvaluateNFModels.R
 
 Step6_JoinTraitswithSpeciesResults.R
 
@@ -370,9 +370,9 @@ dat_ss.rds
 
 dat_trophic.rds
 
-DD_breed_dat.rds
+NF_breed_dat.rds
 
-DDModelEffects_m2.csv
+NFModelEffects_m2.csv
 
 ELPD_m1_allspp.rds
 
@@ -382,13 +382,13 @@ ELPD_m3_allspp.rds
 
 epred_df_m2.rds
 
-mapsDD_lifehistory_m2.rds
+mapsNF_lifehistory_m2.rds
 
-mapsDD_morphometrics_m2.rds
+mapsNF_morphometrics_m2.rds
 
-mapsDD_sexualselection_m2.rds
+mapsNF_sexualselection_m2.rds
 
-mapsDD_trophic_m2.rds
+mapsNF_trophic_m2.rds
 
 priors1_priorsensitivity.rds
 
@@ -554,7 +554,7 @@ Results
 
 all_traitmodels_summary.csv
 
-DDCurveClassificationbySpecies.csv
+NFCurveClassificationbySpecies.csv
 
 MinAdultLH.csv
 
