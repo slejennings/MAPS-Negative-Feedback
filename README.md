@@ -4,7 +4,7 @@
 ### OVERVIEW
 ############################################################################
 
-This repository contains data and code for the analyses in the manuscript "XXXX". The analyses are organized into an R Project, which will reproduce the results, tables, and figures presented in the manuscript. This Read Me file describes the required software and the organization of the R Project and the associated files.
+This repository contains data and code for the analyses in the manuscript "Traits shape demographic regulation in North American birds". The analyses are organized into an R Project, which will reproduce the results, tables, and figures presented in the manuscript. This Read Me file describes the required software and the organization of the R Project and the associated files.
 
 Important: certain files are too large to sync with this GitHub repository and need to be downloaded from the accompanying Google Drive folder. This applies to any file marked with an asterisk (*) at the end of the filename. Link to folder: XXXXXX 
 
