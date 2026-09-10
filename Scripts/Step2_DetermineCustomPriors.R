@@ -1,4 +1,4 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Step2_DetermineCustomPriors.R
 ### Author(s): SLJ
 
@@ -39,13 +39,13 @@ clrs <- MetBrewer::met.brewer("Juarez")
 
 #####################################################################
 # import data 
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
-summary(DD_breed_dat)
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
+summary(NF_breed_dat)
 ######################################################################
 ######### Examine data to decide on model structure #################
 
 
-DD_spp_examine <- DD_breed_dat %>% 
+NF_spp_examine <- NF_breed_dat %>% 
   group_by(SPEC) %>% # group the data by species
   summarize(n = n(), # get the number of data points
             zeros = sum(FY_to_A==0), # get count of number of rows where productivity = 0
@@ -54,20 +54,20 @@ DD_spp_examine <- DD_breed_dat %>%
   arrange(desc(n)) # arrange is descending order
 
 # look at summary statistics for sample sizes for each species
-hist(DD_spp_examine$n)
-mean(DD_spp_examine$n) # 841
-range(DD_spp_examine$n) # 353 up to 2689
+hist(NF_spp_examine$n)
+mean(NF_spp_examine$n) # 841
+range(NF_spp_examine$n) # 353 up to 2689
 
 # look at summary statistics for percent zeros for each species
-hist(DD_spp_examine$percentzero)
-mean(DD_spp_examine$percentzero) # 33%
-range(DD_spp_examine$percentzero) # 12 up to 53
+hist(NF_spp_examine$percentzero)
+mean(NF_spp_examine$percentzero) # 33%
+range(NF_spp_examine$percentzero) # 12 up to 53
 
 # make plots to show range of productivity values for each species
 # color everything where productivity = 0 as red
 # all other values of productivity in blue
 prodplots <-
-  DD_breed_dat %>%
+  NF_breed_dat %>%
   mutate(is_zero = FY_to_A == 0) %>% 
   mutate(FY_to_A = ifelse(is_zero, -0.1, FY_to_A))  %>%  # change all data points that equal zero to -0.1 to help with plotting
   ggplot(aes(x = FY_to_A)) +
@@ -95,7 +95,7 @@ dev.off()
 # log transform all the data where productivity > 0 and plot this for each species
 # if lognormal is a suitable distribution, the plots should look normally distributed
 logplots <-
-  DD_breed_dat %>%
+  NF_breed_dat %>%
   filter(FY_to_A > 0) %>% 
   mutate(log_prod = log(FY_to_A)) %>%
   ggplot(aes(x = log_prod)) +
@@ -133,7 +133,7 @@ dev.off()
 # (here we are pulling the default prior using all the data even though we will actually model each species separately)
 default_prior(FY_to_A  ~ Adult + (1 + Adult|STA) + (1|year), # this is the lognormal model that models all the positive values
               hu ~ Adult + (1 + Adult|STA) + (1|year),
-              data = DD_breed_dat, 
+              data = NF_breed_dat, 
               family = hurdle_lognormal())
 
 # we need priors for:
@@ -161,7 +161,7 @@ default_prior(FY_to_A  ~ Adult + (1 + Adult|STA) + (1|year), # this is the logno
 # this was exploratory analysis we already did to identify that the hurdle lognormal model was appropriate for our data
 
 # examine histogram of productivity across the entire dataset (all species)
-  DD_breed_dat %>%
+NF_breed_dat %>%
   mutate(is_zero = FY_to_A == 0) %>% 
   mutate(FY_to_A = ifelse(is_zero, -0.1, FY_to_A))  %>%  # change all data points that equal zero to -0.1 to help with plotting
   ggplot(aes(x = FY_to_A)) +
@@ -290,7 +290,7 @@ ggplot(hu_prior_slope,
 # the lognormal model only has positive values of productivity
 
 # if we return to the same histogram of productivity across the entire dataset that we examined before:
-DD_breed_dat %>%
+NF_breed_dat %>%
   mutate(is_zero = FY_to_A == 0) %>% 
   mutate(FY_to_A = ifelse(is_zero, -0.1, FY_to_A))  %>%  # change all data points that equal zero to -0.1 to help with plotting
   ggplot(aes(x = FY_to_A)) +

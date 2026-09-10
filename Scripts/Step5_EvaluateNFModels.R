@@ -1,9 +1,12 @@
-###### MAPS Project: Density Dependence #######
-### Script name: Step5_EvaluateDDModels.R
+###### MAPS Project: Negative Feedback #######
+### Script name: Step5_EvaluateNFModels.R
 ### Author(s): SLJ
 
 ########### Objective/Description of Script #####################
-
+# examine model convergence and validate negative feedback models
+# calculate species-specific values for negative feedback variables - threshold and intensity
+# classify curve types
+# measure phylogenetic signal in negative feedback variables
 #################################################################
 
 ### Setup ###
@@ -69,7 +72,7 @@ all_effects_m2 <- bind_rows(fixed_m2, random_m2, sigma_m2) %>%
   mutate(across(Estimate:Rhat, ~round(. ,4))) %>% # round estimate, SE, 95% CI boundaries and Rhat to 4 decimal places
   mutate(across(Bulk_ESS:Tail_ESS, ~ round(. ,0))) # round bulk and tail ESS to nearest integer
 
-write.csv(all_effects_m2, here("Outputs", "DDModelEffects_m2.csv"))
+write.csv(all_effects_m2, here("Outputs", "NFModelEffects_m2.csv"))
 
 
 ######################################################################
@@ -193,10 +196,10 @@ rm(ppc_interval_m2)
 # to make the plots, we need to get the max number of Adults observed for each species
 
 # to do this, we need to import the data for the models
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
 
 # Now, find the max # of adults for each species
-max <- DD_breed_dat %>% 
+max <- NF_breed_dat %>% 
   group_by(SPEC) %>%
   summarize(maxAdult = max(Adult))
 
@@ -316,8 +319,8 @@ library(ape)
 library(geiger)
 
 # import data
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
-head(DD_breed_dat)
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
+head(NF_breed_dat)
 
 # import bird list used by MAPS to convert 4-letter bird codes to scientific names
 birdcodes <- read.csv(here("Data", "IBP-AOS-LIST23.csv"), header=T) 
@@ -335,16 +338,16 @@ tree_out <- read.tree(here("Data", "Jetz_ConsensusPhy.tre"))
 curvetype <- readRDS(here("Outputs", "SppNames_STA.rds")) %>% select(SPEC, Curve_Type) %>% distinct()
 
 # get a list of the 62 species with number of data points for each and join with curve type
-DD_SPEC <- DD_breed_dat %>%
+NF_SPEC <- NF_breed_dat %>%
   group_by(SPEC) %>% # group the data by species
   summarize(n = n()) %>% # get the number of data points for each species
   arrange(desc(n)) %>% # arrange is descending order
   left_join(., curvetype)
 
 # combine names with species codes
-names <- DD_SPEC %>% 
-  left_join(., birdcodes, by="SPEC") %>% # left join keeps all the rows in DD_breed_dat and adds anything that matches from birdcodes
-  dplyr::select(-SP, -CONF, -SPEC6, -CONF6) # remove some unnecessary columns
+names <- NF_SPEC %>% 
+  left_join(., birdcodes, by="SPEC") %>% # left join keeps all the rows in NF_breed_dat and adds anything that matches from birdcodes
+  dplyr::select(-SPEC6) # remove some unnecessary columns
 
 nrow(names) # check all species are present. Should equal 62
 
@@ -363,14 +366,14 @@ names$SCINAME[names$SCINAME=="Setophaga coronata auduboni"]<-"Setophaga coronata
 names$SCINAME[names$SCINAME=="Junco hyemalis oreganus"]<-"Junco hyemalis"
 
 # combine with bird names and 4-letter codes from previous steps
-DDspp_names <- names %>% 
+NFspp_names <- names %>% 
   rename(Species1_BirdLife=SCINAME) %>% # change the name of the column that was called SCINAME to Species1_BirdLife
   left_join(., nameconvert, by="Species1_BirdLife") %>% # join names to nameconvert keeping all the rows in names and only rows from nameconvert that match
   dplyr::select(-Avibase.ID) %>% # drop column with Avibase.ID
   filter(Species3_BirdTree != "Dendroica aestiva") # remove aestiva group for yellow warbler (it shows up twice and we only want one record per species)
 
 # confirm we still have 62 species/rows
-nrow(DDspp_names)
+nrow(NFspp_names)
 
 # one is missing. It is BUOR
 BUOR_name <- names %>%
@@ -380,39 +383,39 @@ BUOR_name <- names %>%
   dplyr::select(-Avibase.ID) # drop column with Avibase.ID
 
 # join
-DDspp_allnames <- bind_rows(DDspp_names, BUOR_name)
+NFspp_allnames <- bind_rows(NFspp_names, BUOR_name)
 
 # confirm we have one-to-one match for scientific names between the 3 naming schemes
 # these will print "TRUE" if we have one-to-one match
-length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species2_eBird)) 
-length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species3_BirdTree))
+length(unique(NFspp_allnames$Species1_BirdLife)) == length(unique(NFspp_allnames$Species2_eBird)) 
+length(unique(NFspp_allnames$Species1_BirdLife)) == length(unique(NFspp_allnames$Species3_BirdTree))
 
-# Join the species density dependence measures and the bird scientific names 
-DDspp_dat <- left_join(DDspp_allnames, ave_negative_slope_m2, by = "SPEC") %>%
+# Join the species negative feedback measures and the bird scientific names 
+NFspp_dat <- left_join(NFspp_allnames, ave_negative_slope_m2, by = "SPEC") %>%
   mutate(Species3_BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # replace blanks in Genus species with underscore
   rowwise() %>%
   mutate(intensity_error = ((conf.high-conf.low) / (2 * 1.96))) %>% # calculate an estimate of SE associated with intensity
   column_to_rownames(., var="Species3_BirdTree")
 
-head(DDspp_dat)
-nrow(DDspp_dat) # should be 62
+head(NFspp_dat)
+nrow(NFspp_dat) # should be 62
 
 # link data to phylogenetic tree
-et <- treedata(tree_out, DDspp_dat, sort=T)
+et <- treedata(tree_out, NFspp_dat, sort=T)
 
-# Is there phylogenetic signal in the minimum adults to trigger density dependence (threshold)?
+# Is there phylogenetic signal in the minimum adults to trigger negative feedback (threshold)?
 # using lambda as a measure of phylogenetic signal
 set.seed(569)
-lambda_threshold <- fitContinuous(et$phy, DDspp_dat[8], model = "lambda")
+lambda_threshold <- fitContinuous(et$phy, NFspp_dat[8], model = "lambda")
 lambda_threshold 
 
 ## Is there phylogenetic signal in the average slope (intensity)?
 # with standard error of the intensity value included
 set.seed(327)
-lambda_intensity <- fitContinuous(et$phy, DDspp_dat[12], SE=DDspp_dat[15], model = "lambda")
+lambda_intensity <- fitContinuous(et$phy, NFspp_dat[12], SE=NFspp_dat[15], model = "lambda")
 lambda_intensity
 
 ## Is there phylogenetic signal in the curve type classification?
 set.seed(418)
-lambda_curve <- fitDiscrete(et$phy, DDspp_dat[3], model = "ER", transform ="lambda")
+lambda_curve <- fitDiscrete(et$phy, NFspp_dat[3], model = "ER", transform ="lambda")
 lambda_curve

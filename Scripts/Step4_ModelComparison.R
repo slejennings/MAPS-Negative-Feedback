@@ -1,9 +1,9 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Step4_ModelComparison.R
 ### Author(s): SLJ
 
 ########### Objective/Description of Script #####################
-# run 3 models for density dependence with 1 model per species:
+# run 3 models for negative feedback with 1 model per species:
 # m1: random intercepts for STA and year
 # m2: random intercepts and slopes for STA and random intercepts for year
 # m3: random intercepts and slopes for both STA and year
@@ -76,7 +76,7 @@ custompriors_b <- c(prior(student_t(3, -0.4, 1), class = Intercept, dpar="hu"), 
 ########### Get Species-specific data ##################
 
 # import data 
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
 
 ######################## Run the models #############################
 
@@ -85,7 +85,7 @@ DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
 ###### Model 1 ########
 
 # run m1 for all species
-m1_allspp_loo <- DD_breed_dat %>%
+m1_allspp_loo <- NF_breed_dat %>%
   group_by(SPEC) %>% # group each species into its own data frame
   nest() %>%
   mutate(dat1 = map(data, ~as_tibble(droplevels(.x))), # make version of species data frame where unused factor levels for STA and year are dropped
@@ -107,7 +107,7 @@ rm(m1_allspp_loo) # remove to free up space
 ###### Model 2 ########
 
 # run m2 for all species
-m2_allspp_loo <- DD_breed_dat %>%
+m2_allspp_loo <- NF_breed_dat %>%
   group_by(SPEC) %>% # group each species into its own data frame
   nest() %>%
   mutate(dat1 = map(data, ~as_tibble(droplevels(.x))), # make version of species data frame where unused factor levels for STA and year are dropped
@@ -129,7 +129,7 @@ rm(m2_allspp_loo) # remove to free up space
 ###### Model 3 ########
 
 # run m3 for all species
-m3_allspp_loo <- DD_breed_dat %>%
+m3_allspp_loo <- NF_breed_dat %>%
   group_by(SPEC) %>% # group each species into its own data frame
   nest() %>%
   mutate(dat1 = map(data, ~as_tibble(droplevels(.x))), # make version of species data frame where unused factor levels for STA and year are dropped

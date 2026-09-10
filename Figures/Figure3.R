@@ -1,4 +1,4 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Figure3.R
 ### Author(s): SLJ
 
@@ -26,7 +26,7 @@ library(patchwork)
 ### Load required files ###
 
 # import data
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
 
 ave_negative_slope_m2 <- readRDS(here("Outputs", "AverageNegativeSlopebySpecies_m2.rds"))
 
@@ -54,15 +54,15 @@ tree_out <- read.tree(here("Data", "Jetz_ConsensusPhy.tre"))
 ### Create Phylogeny Figure ###
 
 # get a list of the 62 species 
-DD_SPEC <- DD_breed_dat %>%
+NF_SPEC <- NF_breed_dat %>%
   ungroup() %>%
   select(SPEC) %>%
   distinct()
 
-# combine names with species codes in DD_SPEC
-names <- DD_SPEC %>% 
-  left_join(., birdcodes, by="SPEC") %>% # left join keeps all the rows in DD_breed_dat and adds anything that matches from birdcodes
-  dplyr::select(-SP, -CONF, -SPEC6, -CONF6) # remove some unnecessary columns
+# combine names with species codes in NF_SPEC
+names <- NF_SPEC %>% 
+  left_join(., birdcodes, by="SPEC") %>% # left join keeps all the rows in NF_breed_dat and adds anything that matches from birdcodes
+  dplyr::select(-SPEC6) # remove some unnecessary columns
 
 nrow(names) # check all species are present. Should equal 62
 
@@ -81,14 +81,14 @@ names$SCINAME[names$SCINAME=="Setophaga coronata auduboni"]<-"Setophaga coronata
 names$SCINAME[names$SCINAME=="Junco hyemalis oreganus"]<-"Junco hyemalis"
 
 # combine with bird names and 4-letter codes from previous steps
-DDspp_names <- names %>% 
+NFspp_names <- names %>% 
   rename(Species1_BirdLife=SCINAME) %>% # change the name of the column that was called SCINAME to Species1_BirdLife
   left_join(., nameconvert, by="Species1_BirdLife") %>% # join names to nameconvert keeping all the rows in names and only rows from nameconvert that match
   dplyr::select(-Avibase.ID) %>% # drop column with Avibase.ID
   filter(Species3_BirdTree != "Dendroica aestiva") # remove aestiva group for yellow warbler (it shows up twice and we only want one record per species)
 
 # confirm we have 62 species/rows
-nrow(DDspp_names)
+nrow(NFspp_names)
 
 # one is missing -> BUOR
 BUOR_name <- names %>%
@@ -98,22 +98,22 @@ BUOR_name <- names %>%
   dplyr::select(-Avibase.ID) # drop column with Avibase.ID
 
 # join to get 62 species
-DDspp_allnames <- bind_rows(DDspp_names, BUOR_name)
+NFspp_allnames <- bind_rows(NFspp_names, BUOR_name)
 
 # confirm we have one-to-one match for scientific names between the 3 naming schemes
 # these will print "TRUE" if we have one-to-one match
-length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species2_eBird)) 
-length(unique(DDspp_allnames$Species1_BirdLife)) == length(unique(DDspp_allnames$Species3_BirdTree))
+length(unique(NFspp_allnames$Species1_BirdLife)) == length(unique(NFspp_allnames$Species2_eBird)) 
+length(unique(NFspp_allnames$Species1_BirdLife)) == length(unique(NFspp_allnames$Species3_BirdTree))
 
 # add curve type for each species
-DDspp_curve <- SppNames_STA %>% select(SPEC, Curve_Type) %>% distinct() %>%
-  left_join(DDspp_allnames, .)
+NFspp_curve <- SppNames_STA %>% select(SPEC, Curve_Type) %>% distinct() %>%
+  left_join(NFspp_allnames, .)
 
 # add family information to bird species list using eBird taxonomy
-DDspp_tax <- ebird_tax %>% 
+NFspp_tax <- ebird_tax %>% 
   rename(Species2_eBird = SCI_NAME) %>% # use Species2_eBird for joining data as these are using eBird names
   select(Species2_eBird, FAMILY) %>%
-  left_join(DDspp_curve, .) %>%
+  left_join(NFspp_curve, .) %>%
   mutate(Family = word(FAMILY, 1), # only keep first word in FAMILY columnn (scientific family name)
          Sci_Name = Species3_BirdTree,
          Spp_Name= str_replace(Sci_Name, " ", "_")) %>%
@@ -121,7 +121,7 @@ DDspp_tax <- ebird_tax %>%
 
 
 # prep a list of species, their families, and curve types to be joined to phylogeny
-families <- DDspp_tax %>% 
+families <- NFspp_tax %>% 
   select(Spp_Name, Family, Curve_Type) %>%
   rename(label = Spp_Name, family = Family, curve = Curve_Type)
 
@@ -154,17 +154,17 @@ family_tree <- groupOTU(new_tree, family_info, group_name="Family")
 curvefamily_tree <- groupOTU(family_tree, curve_info, group_name="Curve")
 # this will allow us to label tippoints using curve type
 
-# join the species density dependence measures with the bird scientific names 
-DDspp_dat <- left_join(DDspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
+# join the species negative feedback measures with the bird scientific names 
+NFspp_dat <- left_join(NFspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
   column_to_rownames(., var="Spp_Name")
 
 # link data to phylogenetic tree
-tree_dat <- treedata(curvefamily_tree, DDspp_dat, sort=T)
+tree_dat <- treedata(curvefamily_tree, NFspp_dat, sort=T)
 
 phytree <-tree_dat$phy # get phylo tree for plotting
 
 # we don't want names with underscores in the plot, so create a df for converting them
-newlabs <- DDspp_tax %>% select(Spp_Name, Sci_Name)
+newlabs <- NFspp_tax %>% select(Spp_Name, Sci_Name)
 # rename the tips of the tree to scientific names without underscores
 phytree_name <- treeio::rename_taxa(phytree, data=newlabs, key=Spp_Name, value=Sci_Name)
 # note: ended up not plotting species names on the phylogeny but retaining the above steps for future reference
@@ -214,12 +214,12 @@ dt <- data.frame(node =c(123, 65, 70, 74, 84, 87, 92, 95, 102, 109),
 # get data for threshold and intensity
 # this needs to have species names formatted without the underscore to match the updated labels for tree tips
 
-intensity_dat <- left_join(DDspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
+intensity_dat <- left_join(NFspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
   mutate(intensity = abs(estimate)) %>%
   select(Sci_Name, intensity) %>%
   column_to_rownames(., var="Sci_Name")
   
-threshold_dat <- left_join(DDspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
+threshold_dat <- left_join(NFspp_tax, ave_negative_slope_m2, by = "SPEC") %>%
   mutate(threshold = min_adult) %>%
   select(Sci_Name, threshold) %>%
   column_to_rownames(., var="Sci_Name")

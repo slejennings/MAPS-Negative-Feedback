@@ -1,4 +1,4 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Step3_PriorSensitivityTesting.R
 ### Author(s): SLJ
 
@@ -66,12 +66,12 @@ priors_2 <- c(prior(student_t(3, -0.4, 1), class = Intercept, dpar="hu"), # inte
 
 ###################################################################################
 # import data 
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
 
 ######################################################################################
 
 # run models using priors_1
-m_allspp_p1 <- DD_breed_dat %>%
+m_allspp_p1 <- NF_breed_dat %>%
   group_by(SPEC) %>% # group each species into its own data frame
   nest() %>%
   mutate(dat1 = map(data, ~as_tibble(droplevels(.x))), # make version of species data frame where unused factor levels for STA and year are dropped
@@ -115,7 +115,7 @@ conflict_p1count <- conflict_p1 %>% group_by(variable) %>% count() %>% rename(n_
 
 ######################################################################################
 # run models using priors_2
-m_allspp_p2 <- DD_breed_dat %>%
+m_allspp_p2 <- NF_breed_dat %>%
   group_by(SPEC) %>% # group each species into its own data frame
   nest() %>%
   mutate(dat1 = map(data, ~as_tibble(droplevels(.x))), # make version of species data frame where unused factor levels for STA and year are dropped
@@ -170,7 +170,7 @@ priors_3 <- c(prior(student_t(3, -0.4, 1), class = Intercept, dpar="hu"), # inte
               prior(student_t(3, 0, 2.5), class=sigma), # sigma (residual standard deviation) for lognormal model -> same as default
               prior(lkj(1), class = cor)) # correlation between random slopes and intercepts -> same as default
 
-m_allspp_p3 <- DD_breed_dat %>%
+m_allspp_p3 <- NF_breed_dat %>%
   group_by(SPEC) %>% # group each species into its own data frame
   nest() %>%
   mutate(dat1 = map(data, ~as_tibble(droplevels(.x))), # make version of species data frame where unused factor levels for STA and year are dropped

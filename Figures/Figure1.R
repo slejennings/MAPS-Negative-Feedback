@@ -1,10 +1,10 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Figure1.R
 ### Author(s): SLJ, JML
 
 ########### Objective/Description of Script #####################
 # create Figure 1, which contains two panels
-# Panel 1:  map showing locations of MAPS banding stations
+# Panel 1: map showing locations of MAPS banding stations
 # Panel 2: predicted relationship between productivity and abundance and the two extracted negative feedback variables
 #################################################################
 
@@ -26,7 +26,7 @@ library(patchwork)
 ### Import data files ###
 
 # import productivity-abundance data
-DD_breed_dat <- readRDS(here("Outputs", "DD_breed_dat.rds"))
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
 
 # import station information 
 station_info <- read.csv(here("Data", "MAPS_STATION_location_and_operations.csv"), header=T) %>%
@@ -39,12 +39,12 @@ epred_df_m2 <- readRDS(here("Outputs", "epred_df_m2.rds"))
 ### Create Panel A of Figure 1: Maps of MAPS banding stations ###
 
 # use productivity-abundance to generate a list of MAPS stations that were in the final analysis
-STAlist <- DD_breed_dat %>%
+STAlist <- NF_breed_dat %>%
   select(STA) %>% distinct() 
 nrow(STAlist) # 378 MAPS stations
 
 # list of stations with number of species (out of 62 in the analysis) at each station
-STAlist <- DD_breed_dat %>%
+STAlist <- NF_breed_dat %>%
   select(STA, SPEC) %>% 
   distinct() %>%
   group_by(STA) %>%

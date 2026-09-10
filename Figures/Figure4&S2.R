@@ -1,4 +1,4 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Figure4.R
 ### Author(s): SLJ
 

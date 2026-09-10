@@ -1,4 +1,4 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: FigureS1.R
 ### Author(s): SLJ
 
@@ -64,8 +64,8 @@ info <- SppNames_STA %>%
   distinct()
 
 # get number of observations for each species
-DD_breed_dat <- readRDS("~/Desktop/MAPS Density Dependence/MAPS-Density-Dependence/Outputs/DD_breed_dat.rds")
-numobs <- DD_breed_dat %>% 
+NF_breed_dat <- readRDS(here("Outputs", "NF_breed_dat.rds"))
+numobs <- NF_breed_dat %>% 
   group_by(SPEC) %>% # group the data by species
   summarize(n = n()) %>%
   mutate(obs = paste("(n = ", n, ")", sep=""))

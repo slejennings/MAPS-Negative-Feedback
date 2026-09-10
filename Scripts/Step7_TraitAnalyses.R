@@ -1,9 +1,9 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Step7_TraitAnalyses.R
 ### Author(s): SLJ, CDF
 
 ########### Objective/Description of Script #####################
-# model relationships between density dependence metrics and species traits using models that take phylogeny into account
+# model relationships between negative feedback metrics and species traits using models that take phylogeny into account
 #################################################################
 
 
@@ -52,21 +52,21 @@ tree_out<- read.tree(here("Data", "Jetz_ConsensusPhy.tre"))
 # Import trait files from previous step
 
 # morphometric traits
-DD_morph <- readRDS(here("Outputs", "mapsDD_morphometrics_m2.rds"))
-head(DD_morph)
-class(DD_morph)
+NF_morph <- readRDS(here("Outputs", "mapsNF_morphometrics_m2.rds"))
+head(NF_morph)
+class(NF_morph)
 
 # life history traits
-DD_life <- readRDS(here("Outputs", "mapsDD_lifehistory_m2.rds"))
-head(DD_life)
+NF_life <- readRDS(here("Outputs", "mapsNF_lifehistory_m2.rds"))
+head(NF_life)
 
 # trophic traits
-DD_trophic <- readRDS(here("Outputs", "mapsDD_trophic_m2.rds"))
-head(DD_trophic)
+NF_trophic <- readRDS(here("Outputs", "mapsNF_trophic_m2.rds"))
+head(NF_trophic)
 
 # sexual selection traits
-DD_SS <- readRDS(here("Outputs", "mapsDD_sexualselection_m2.rds"))
-head(DD_SS)
+NF_SS <- readRDS(here("Outputs", "mapsNF_sexualselection_m2.rds"))
+head(NF_SS)
 
 ##########################################################################################
 #################### Density Dependence Metrics and Life History Traits ##################
@@ -76,7 +76,7 @@ head(DD_SS)
 
 
 # replace blanks in Genus species with underscore
-dat_LH <- DD_life %>%
+dat_LH <- NF_life %>%
   mutate( # make two columns with different names that are otherwise identical with underscore between genus and species
     rownames = str_replace(Species3_BirdTree, " ", "_"), # this one will be moved to rownames
     BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # this one will remain in the data frame
@@ -100,12 +100,12 @@ LH_cov <- ape::vcv.phylo(LH_tree$phy, corr = T)
 
 # two response variables are estimate (Intensity) and min_adult (Threshold)
 # examine distributions for both
-hist(abs(DD_life$min_adult))
-hist(log(abs(DD_life$min_adult))) # log transformed
+hist(abs(NF_life$min_adult))
+hist(log(abs(NF_life$min_adult))) # log transformed
 
-hist(DD_life$estimate) # raw
-hist(abs(DD_life$estimate)) # take absolute value
-hist(log(abs(DD_life$estimate))) # take absolute value and log transform
+hist(NF_life$estimate) # raw
+hist(abs(NF_life$estimate)) # take absolute value
+hist(log(abs(NF_life$estimate))) # take absolute value and log transform
 
 # standardize predictors that will be used as fixed effects in models
 dat_LH <- dat_LH |>
@@ -270,10 +270,10 @@ plot(conditional_effects(slope_LH_mod_logn, effects="sclitter_or_clutch_size_n")
 
 ### Join and prune tree and create covariance matrix ###
 
-head(DD_morph)
+head(NF_morph)
 
 # replace blanks in Genus species with underscore
-dat_morph <- DD_morph %>%
+dat_morph <- NF_morph %>%
   mutate( # make two columns with different names that are otherwise identical with underscore between genus and species
     rownames = str_replace(Species3_BirdTree, " ", "_"), # this one will be moved to rownames
     BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # this one will remain in the data frame
@@ -442,10 +442,10 @@ pp_check(slope_Morph_mod_logn, type="intervals", ndraws = 100)
 
 ### Join and prune tree and create covariance matrix ###
 
-head(DD_trophic)
+head(NF_trophic)
 
 # replace blanks in Genus species with underscore
-dat_trophic <- DD_trophic %>%
+dat_trophic <- NF_trophic %>%
   mutate( # make two columns with different names that are otherwise identical with underscore between genus and species
     rownames = str_replace(Species3_BirdTree, " ", "_"), # this one will be moved to rownames
     BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # this one will remain in the data frame
@@ -623,7 +623,7 @@ plot(conditional_effects(slope_Trophic_mod_logn, effects="scStrata"), points = T
 ### Join and prune tree and create covariance matrix ###
 
 # replace blanks in Genus species with underscore
-dat_ss <- DD_SS %>%
+dat_ss <- NF_SS %>%
   mutate( # make two columns with different names that are otherwise identical with underscore between genus and species
     rownames = str_replace(Species3_BirdTree, " ", "_"), # this one will be moved to rownames
     BirdTree = str_replace(Species3_BirdTree, " ", "_")) %>% # this one will remain in the data frame

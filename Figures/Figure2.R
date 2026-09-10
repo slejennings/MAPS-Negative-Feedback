@@ -1,10 +1,10 @@
-###### MAPS Project: Density Dependence #######
+###### MAPS Project: Negative Feedback #######
 ### Script name: Figure2.R
 ### Author(s): SLJ, JML
 
 ########### Objective/Description of Script #####################
 # Create Figure 2 
-# Three example abundance-productivity curves (type 1, 2, 3)
+# Three examples of abundance-productivity curves (type 1, 2, 3)
 #################################################################
 
 ### Setup ###

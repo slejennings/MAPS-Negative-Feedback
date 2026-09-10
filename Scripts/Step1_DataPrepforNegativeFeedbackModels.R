@@ -1,5 +1,5 @@
-###### MAPS Project: Density Dependence #######
-### Script name: Step1_DataPrepforDensityDependenceModels.R
+###### MAPS Project: Negative Feedback #######
+### Script name: Step1_DataPrepforNegativeFeedbackModels.R
 ### Author(s): SLJ
 
 ########### Objective/Description of Script #####################
@@ -7,7 +7,7 @@
 # data used here comes from 1989 through 2018
 #################################################################
 
-####### Step 1: Prep MAPS Data for Density Dependence Models ########
+####### Step 1: Prep MAPS Data for Negative Feedback Models ########
 
 ### Setup ####
 
@@ -365,7 +365,7 @@ allspp_AdultProd <- allspp_AdultProd %>%
   mutate_at(c("STA", "SPEC", "year" ), as.factor) # change multiple columns to factors
 
 # examine sample size for each species
-DD_spp <- allspp_AdultProd %>%
+NF_spp <- allspp_AdultProd %>%
   group_by(SPEC) %>%
   count() %>%
   arrange(desc(n))
@@ -380,13 +380,13 @@ adult0 <- allspp_AdultProd %>%
   pivot_wider(names_from = class, values_from=n) %>%
   mutate(percentage = round((Yes/No)*100, 1)) %>%
   select(-Yes, -No) %>%
-  inner_join(., DD_spp) %>%
+  inner_join(., NF_spp) %>%
   arrange(desc(n))
 
 print(adult0, n=Inf)
 
 # fix this. Make Adult = 1 if FY_to_A is > 0
-DD_dat <- allspp_AdultProd %>%
+NF_dat <- allspp_AdultProd %>%
   mutate(Adult = if_else(Adult == 0 & FY_to_A > 0, 1, Adult))
 
 # For the final filtering steps, check that all species-station observations being used are from birds classified as breeding at that location
@@ -422,17 +422,17 @@ brstat_clean <- anti_join(brstat, multistatus) %>%
   bind_rows(WEFL_fix) %>%
   mutate(STA = factor(STA))
 
-# combine with DD_dat
-DD_brstat <- DD_dat %>% 
+# combine with NF_dat
+NF_brstat <- NF_dat %>% 
   left_join(., brstat_clean)
 
 # identify if any are missing breeding status
-missing <- DD_brstat %>%
+missing <- NF_brstat %>%
   filter(is.na(BRSTAT))
 nrow(missing) # all rows have a breeding status
 
 # look at list of species that have 350 or more data points
-DD_spp_examine <- DD_brstat %>% 
+NF_spp_examine <- NF_brstat %>% 
   group_by(SPEC) %>% # group the data by species
   summarize(n = n(), # get the number of data points
             zeros = sum(FY_to_A==0), # get count of number of rows where productivity = 0
@@ -441,27 +441,27 @@ DD_spp_examine <- DD_brstat %>%
   filter(n > 350) %>% # restrict to species with 350 data points or more
   arrange(desc(n)) # arrange is descending order
 
-SPEC350 <- DD_spp_examine %>% pull(SPEC) # get a vector of species with more than 350 points
+SPEC350 <- NF_spp_examine %>% pull(SPEC) # get a vector of species with more than 350 points
 
-# filter DD_brstat to retain only these species
-DD_brstat_SPEC <- DD_brstat %>%
+# filter NF_brstat to retain only these species
+NF_brstat_SPEC <- NF_brstat %>%
   filter(SPEC %in% SPEC350)
 
 # make a vector of non-breeding classification codes
 nonbreeder <- c("T", "A", "M")
 
 # pull all the data points for non-breeding species/station combinations
-nonbreeding <- DD_brstat_SPEC %>%
+nonbreeding <- NF_brstat_SPEC %>%
   filter(BRSTAT %in% nonbreeder) 
 nrow(nonbreeding) # 1078
 
 # get clean dataset with final species (n = 62 species) and only breeding birds
-DD_breed_dat <- DD_brstat %>%
+NF_breed_dat <- NF_brstat %>%
   filter(SPEC %in% SPEC350) %>% # reduce to species with > 350 points
   anti_join(., nonbreeding) # remove records from stations where species are not breeding
 
-length(unique(DD_breed_dat$SPEC)) # 62 species
+length(unique(NF_breed_dat$SPEC)) # 62 species
 
 # export data
-saveRDS(DD_breed_dat, here("Outputs", "DD_breed_dat.rds"))
+saveRDS(NF_breed_dat, here("Outputs", "NF_breed_dat.rds"))
 
